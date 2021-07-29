@@ -53,7 +53,12 @@
 
 % The science-type option: numerical in-text citation with references in order of appearance.
 \usepackage[style=numeric-comp, sorting=none, backend=biber, doi=false, isbn=false]{biblatex}
+\usepackage{glossaries}
+%\usepackage{glossaries-extra}
 \newcommand*{\bibtitle}{References}
+ 
+\input{text/abbreviations}
+%\setacronymstyle{}{long-short}
 
 % The humanities-type option: author-year in-text citation with an alphabetical works cited.
 %\usepackage[style=authoryear, sorting=nyt, backend=biber, maxcitenames=2, useprefix, doi=false, isbn=false]{biblatex}
@@ -64,6 +69,7 @@
 
 % Change this to the name of your .bib file (usually exported from a citation manager like Zotero or EndNote).
 \addbibresource{references.bib}
+\addbibresource{bib/thesis.bib}
 
 
 % Uncomment this if you want equation numbers per section (2.3.12), instead of per chapter (2.18):
@@ -73,7 +79,8 @@
 
 %%%%% THESIS / TITLE PAGE INFORMATION
 % Everybody needs to complete the following:
-\title{Machine learning for genetic variation: applications to leukemia and demographic inference}
+%\title{Machine learning for genetic variation: applications to leukemia and demographic inference}
+\title{Machine learning methods for the interpretation of next generation sequencing data: applications to leukemia and demographic inference}
 \author{Christopher B. Cole}
 \college{Exeter College}
 
@@ -183,12 +190,12 @@
 % Uncomment to generate a list of tables:
 %\listoftables
 %	\mtcaddchapter
-
+\printnoidxglossaries
 %%%%% LIST OF ABBREVIATIONS
 % This example includes a list of abbreviations.  Look at text/abbreviations.tex to see how that file is
 % formatted.  The template can handle any kind of list though, so this might be a good place for a
 % glossary, etc.
-\include{text/abbreviations}
+%\include{text/abbreviations}
 
 % The Roman pages, like the Roman Empire, must come to its inevitable close.
 \end{romanpages}
@@ -197,8 +204,11 @@
 %%%%% CHAPTERS
 % Add or remove any chapters you'd like here, by file name (excluding '.tex'):
 \flushbottom
-\include{text/ch1-intro}
-\include{text/ch2-litreview}
+\include{text/chapter1_intro}
+%\include{text/chapter2_smc}
+\include{text/chapter3_bm}
+%\include{text/chapter4_tm}
+%\include{text/chapter5_nn}
 
 
 %% APPENDICES %% 
@@ -206,7 +216,7 @@
 %    page that just says "Appendices" to signal the end of your main text.
 \startappendices
 % Add or remove any appendices you'd like here:
-\include{text/appendix-1}
+%\include{text/appendix-1}
 
 
 %%%%% REFERENCES

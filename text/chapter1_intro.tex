@@ -1,0 +1,157 @@
+\begin{savequote}[8cm]
+    In the beginning there was nothing, which exploded.
+  \qauthor{--- Terry Pratchett, \textit{Lords and Ladies}}
+\end{savequote}
+
+
+% What I have is:
+%   Some work on a method for demographic inference (this could be how genetic variation is a marker for demographics)
+%   A novel result about a migration (how shared genetic variation can be used as information to determine history)
+%   Shared genetic variation across the genome can show transcription factor networks 
+%       but we haven't really shown this.
+% 
+%   A good way to phrase this is that I want to use machine learning and statistical inference
+% methods to leverage the variation between genomes to solve outstanding problems in 
+% statistical genetics, and try to integrate over the variation within the genome to understand
+% to identify regulatory structures for a particular disease with a single genetic difference.. 
+
+% So in the introduction I can talk about 
+%       - What causes genetic variation between individuals
+%           - What models we have for how this occurs (coalescent, generating models)
+%       - How can we use variation within the genome to facilitate functional genomics?
+%           - In this case, variation is much more like noise, and we have to see through it 
+%               to get at biological pathways. 
+% The general idea is to use machine learning to wrangle genetic variation into patterns which can be used to inform
+% the pursuit of understanding biology. 
+%
+%
+%
+% Outline (goal of about 20-25 pages I guess). 
+% It can be both informative and a source of noise in statistical models which seek to simplify
+% to usable results.
+%
+%   First, need to establish the problem. What is the problem?
+%       The problem is that the genome is hugely important for understanding 
+%       how the human body functions at a molecular level. When things go wrong,
+%       the result is disease. Some of the answers for how and why disease occurs can '
+%       lie in figuring out molecular mechanisms that are disrupted by disease.  
+%  and again the answers for what cuase the disease can 
+%       sometimes lie in what went wrong with the genetics. Understanding how the genome is
+%       organised, and how the actual sequence of base pairs relates to biological processes
+% 
+%   But this isn't exactly a good lead in for the second part of the thesis. The question there is more
+% can we group accessible elements which are important for leukemia. Then how can we uncover the 
+% similarities in these and find out what is happening on a molecular level. 
+%   How can the sequence of uniquely accesible elements help us to find out what is happening in cancer?
+%       So it's more like machine learning can find patterns in the sequences 
+%       but the machine learning is actually just the grouping part, I'm not saying anything about the 
+%       actual sequences with that. 
+%       So I'm using machine learning to identify accessible sequences that are predominantly associated with
+%       the leukemia samples. Does this have to do with genetic variation? Or what can I call this?
+%       
+%        Okay so MLL is a cancer caused by a single genetic mutation. This single mutation
+%        has caused it to go from being a normal cell to being a cancerous one. What happens in the 
+        % middle between the single mutation and cancer?
+% 
+        % Can we identify regions of the genome that are associated with the disease?  What does this have to do with Genetic variation?  
+            % need a method 
+%
+
+% Okay let's try again.
+%
+%   Two sides of the thesis. Genetic variation between individuals and the effect of genetic variation within a single genome. For the second, take the simplest model system of a single variation. This allows us to ask all sorts of questions about the extent to which a single abherant protein can have on the regulatory structure of the entire genome, and to see how far reaching and connected these things are. One major facet of this regulation that we know about is chromatin accessibility. Can we use machine learning to identify accessible regions of DNA associated with the mutation? 
+%   So what do I need to introduce?
+
+    % This is based off of Aaron's framework
+    
+    % Introduction:
+    %     Genetic variation causes
+    %     Genetic variation between individuals and coalescent theory
+    %     Impact of genetic variation within the genome: a chromosomal translocation event and mixed lineage leukemia.
+    %         - 
+
+    % Part 1: Interpreting genetic variation between individuals 
+    %     Chapter 1: A particle filter for demographic inference
+    %     Chapter 2: Ancient admixture 
+    % Part 2: The impacts of genetic variation within a single genome
+    %     Chapter 3: LDA for bulk ATAC-seq and Erythropoesis
+    %     Chapter 4: LDA for MLL-r 
+    %     Chapter 5: A NN for blah
+    % Part 3: End matter
+
+    % For the MLL part:
+    %     Genomic regulation by chromatin conformation and accessible DNA.
+    %         How is it regulated? What are the effects?
+    %         Measuring it via ATAC-seq and DNA-ase seq
+    %     Topic modelling (I can save this for the chapter)
+    %         General idea
+    %         LDA 
+    %         Adjusting the algorithm for bulk ATAC-seq. (This is due to a lack of appropriate differentiation systems for single cell. )
+    %     MLL leukemia biology and pathology (This can be )
+    %         Also will need to introduce erythropoesis too if this will be a big part of it.
+    %         Will this be a seperate chapter? Or a part of the topic modelling chapter?
+
+    %     * My big problem is that this isn't really related to genetic variation.... It's more
+    %         like finding regions associated with a cell type. 
+
+
+    % page counts...
+    %   intro: 10
+    %   1: smc2 - 20 pages
+    %   2: bm - 30 pages
+    %   3: ery: 25 pages
+    %   4: mll: 25
+    %   5. condlusion : 10
+
+\chapter{\label{ch:1-intro} Next Generation Sequencing} 
+
+\minitoc
+
+
+Introduction Outline: 
+
+\begin{itemize}
+    \item Genomic Sequencing Data
+        
+    \begin{enumerate}
+        \item Enabling advances in Sequencing technologies
+        \item Applications of sequencing technologies
+        \begin{enumerate}
+            \item Population variation (whole genome sequencing)
+            \begin{enumerate}
+                \item Technical error and variant calling
+                % I dont deal with this but its an important caveat
+                \item Issues with assembly in diverse populations
+            \end{enumerate}
+            \item Functional genomics (ATAC-seq, DNAse-seq, ChIP-seq, etc.)
+            \begin{enumerate}
+                \item 
+            \end{enumerate}
+        \end{enumerate}
+
+    \end{enumerate}
+
+    \item Machine Learning and Statistical Inference for sequencing data
+    \begin{enumerate}
+        \item Reasons for considering machine learning for these two problems.
+    \end{enumerate} 
+     
+    \item \textbf{Aim}: Use sequencing data and machine learning to find new ways to answer outstanding issues at the population and cellular scale.
+    \begin{enumerate}
+        \item \textbf{Specific Aim 1}: Estimate a coloured ancestral recombination graph from WGS Data
+        \begin{enumerate}
+            \item Modelling ancestry with the coalescent
+            \item Traditional approaches to modelling demography
+            \item Sequential Monte Carlo
+            \item Advantages, including directional migration
+        \end{enumerate}
+        \item \textbf{Specific Aim 2}: Predict Regulatory Regions of MLL-AF4 Leukemia from ATAC-seq
+        \begin{enumerate}
+            \item Traditional methods for genomic sequence annotation
+            \item Artificial Neural Networks
+            \item Adopting artificial intelligence models for sequence based learning
+            \item Advantages , including in silico mutagenesis 
+        \end{enumerate}
+    \end{enumerate}
+\end{itemize}
+
