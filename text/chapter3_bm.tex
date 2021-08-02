@@ -18,109 +18,23 @@
 
 \newpage
 
-\begin{enumerate}
-    \item Introduction to the problem
-    \begin{enumerate}
-        \item Current theories on the Out of Africa migration and the peopling of Eurasia
-        \item The unique role of contemporary whole genome sequencing and demographic inference in pre-history. 
-        \item The need for complete, coloured, ARG inference. 
-        \begin{enumerate}
-            \item Limitations of haplotype based methods
-            \item Bias in Ne as a consequence of directional migration
-            \item Comparison to other demographic inference methods
-            \item Comparison to other ARG inference methods 
-            \begin{enumerate}
-                \item Relate, Argweaver-D, tsinfer
-            \end{enumerate}
-        \end{enumerate}
-        \item Alternative Methods for detecting Admixture
-        \begin{enumerate}
-            \item Reich D statistics 
-            \item qpGraph
-        \end{enumerate}
-        \item Description of data sets of global human variation
-        \begin{enumerate}
-            \item SGDP
-            \item HGDP
-        \end{enumerate}
-    \end{enumerate}
-    \item Population Size Inference in the Late Middle Paleolithic
-    \begin{enumerate}
-        \item SMCSMC based inference of individual populations
-        \begin{enumerate}
-            \item Details of particular African and Eurasian groups
-        \end{enumerate}
-        \item MSMC based inference of individual populations
-        \item SMCSMC joint inference of populations
-        \begin{enumerate}
-            \item Contrasting Ne estimation as a consequence of joint optimisation of the migration function
-        \end{enumerate}
-        \item MSMC joint inference of populations 
-        \item Comparison of pre-OoA Ne between methods
-        \item Simulations to support the role of directional migration in the difference of Ne
-        \item Conclusions on the benefits of a coloured ARG for population demographic inference.
-    \end{enumerate}
-
-    \item Directional Migration in sub-Saharan African Prehistory
-    \begin{enumerate}
-        \item Introduction to known sub-Saharan African Prehistoric migrations
-        \begin{enumerate}
-            \item Population names and definitions.
-        \end{enumerate}
-        \item SMCSMC inference of directional migration in African populations
-        \begin{enumerate}
-            \item Definition of the Integrated Migration Fraction (IMF)
-            \item Statistical versus Physical phasing methods
-        \end{enumerate}
-        \item Comparison to cross coalescent rate (CCR) and symmetric migration rate estimates 
-        \item Population Specific Migration Rates
-        \begin{enumerate}
-            \item IMF shows different rates according to the population strata
-            \item Niger-Kordofanian and Nilo-Saharan Central African Archetype
-            \item Special case of Mbuti and Biaka Central African Hunter Gatherers 
-            \item The San and other South African Hunter Gatherer Populations
-            \item Afroasiatic Populations show high levels of Holocene specific migration
-            \begin{enumerate}
-                \item Simulations to show this does not affect inference in prehistory (*)
-            \end{enumerate}
-        \end{enumerate}
-    \end{enumerate}
-    \item Detecting Archaic Introgression with Admixture Tracts
-    \begin{enumerate}
-        \item SMC2 Inference of Vindija/YRI
-        \begin{enumerate}
-            \item Inference from differentially dated samples
-        \end{enumerate}
-        \item Algorithm for inferring admixed tracts
-        \item Reich D statistics 
-        \begin{enumerate}
-            \item Proof of equivalency for our special case
-        \end{enumerate}
-        \item Simulations (*)
-        \item Conclusions on archaic admixture derived from directional migration
-    \end{enumerate}
-    \item Conclusion and comparison with older evidence for back-to-Africa scenarios
-\end{enumerate}
-
-\newpage
-
 \printglossary
 
 \section{Introduction}
-
-
-
 
 Methods to characterize demographic history from genetic data alone form a useful and independent complement to archaeological approaches \cite{Nielsen2017a}, and many methods have been developed for this purpose \cite{Li2011,Pickrell2012,Rasmussen2014,Schiffels2014,Mathieson2014,Steinrucken2015,Malaspinas2016,Chikhi2018,Speidel2019,Kelleher2019,Wang2019a,Albers2019}. 
 A particularly interesting time in human history is the end of the Middle Paleolithic approximately $\sim$60 \gls{kya}, which saw the divergence of the most deeply sampled lineages of human genetic variation, introgression from multiple archaic sources, and the expansion of anatomically modern humans \gls{ooa}. 
 As archaeological evidence and ancient DNA from this period are scarce, inference of demography from present-day genetic data is potentially very informative, though technically challenging. Here, we use the previously developed approach, \gls{smc2}, to infer population size and directional migration in a unique and dynamic period of ancient human development.
 
-This section is structured as follows. Firstly, I give an introduction to pertinent historical theories relating to this period of time so as to orient the reader. Secondly, I introduce competing approaches for the inference of ancestral recombination graphs and motivate the usage of \gls{smc2} for this application. Following this, I outline my contributions to this area of research, which involve the identification and characterization of a putative directional migration from the ancestors of modern day Eurasians to the ancestors of modern day Africans. 
+This section is structured as follows. Firstly, I give an introduction to pertinent historical and anthropological theories relating to this period of time so as to orient the reader. Secondly, I introduce competing approaches for the inference of ancestral recombination graphs and motivate the usage of \gls{smc2} for this application. Following this, I outline my contributions to this area of research, which involve the identification and characterization of a putative directional migration from the ancestors of modern day Eurasians to the ancestors of modern day Africans. 
 
 
 \subsection{Out of Africa and the peopling of Eurasia}
 
-An abundance of archaeological and genetic evidence has shown that the continent of Africa is the historical source of all modern humans \cite{Lopez2015}. The continent contains within it more genetic sequence diversity than any other region of the world, so much so that the two haplotypes of a single African genome are more different than any two haplotypes outside of the continent \cite{Mallick2016}. After diverging from archaic humans such as Neanderthals and Denisovans some  As such, it contains within it a large proportion of the extant genetic variation of our species \cite{SA2009}.
+An abundance of archaeological and genetic evidence has shown that the continent of Africa is the historical source of all modern humans \cite{Lopez2015}. The continent contains within it more genetic sequence diversity than any other region of the world, so much so that the two haplotypes of a single African genome are less similar than any two haplotypes outside of the continent \cite{Mallick2016}. The population structure in the continent has its roots in the transition from the middle to late Pleistocene, with hunter gatherers groups from Southern Africa including the Khomani San and Ju'|Hoan diverging in large part from the remainder of modern African populations between 200 and 250 \gls{kya} \cite{Lipson2019}. 
+
+
+
 
 
 \subsection{The Ancestral Recombination Graph (ARG) and admixture inference in the ancient past}

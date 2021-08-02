@@ -5,9 +5,12 @@
 %  \qauthor{--- Cicero's \textit{de Finibus Bonorum et Malorum}}
 %\end{savequote}
 
-\chapter{\label{ch:1-intro} Topic Modelling of Chromatin Accessibility in Mixed Lineage Leukemia} 
+\chapter{\label{ch:1-intro} Topic Modelling and Latent Dirichlet Allocation for Unsupervised Clustering of Bulk ATAC-seq Experiments}
 
 \minitoc
+
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
 
 %\section{Motivation}
 \section{Erythropoesis as a well-characterised model system}
@@ -29,4 +32,131 @@ Because of the relative sparsity of well characterised MLL-r specific enhancers,
     \item Peak calling. MaCS3 versus lance-o-tron. What kind of diagnostic features can we see here? 
     \item Number of peaks. 
     \item Peak length distribution
-\end{enumerate}
+\end{enumerate}A
+
+
+\section{Results}
+
+
+
+\begin{itemize}
+    \tightlist
+    \item
+      LDA is shown to be a viable method for single cell ATAC. Does it also
+      work on bulk experiments?
+    \item
+      LDA is able to find reproducible topic loadings that differentiate
+      pseudobulked clusters.
+    
+      \begin{itemize}
+      \tightlist
+      \item
+        (Pseudobulk cluster topic loadings resemble single cell topic
+        loadings)
+      \item
+        \textbf{Question}: Have a view on what the best data for this
+        question would have been * (put this into the discussion)
+      \end{itemize}
+    \item
+      LDA versus differential OCR \textbf{\emph{(think more about this)}}
+    \item
+      Topics are reproducible across stochastic replicates, but variously
+      so.
+    
+      \begin{itemize}
+      \tightlist
+      \item
+        Dimensionality reduction with and without the not-reproducible
+        topics
+      \item
+        Are there any systematic differences between the reproducible topics
+        and the not reproducible ones (i.e.~differences in strengths of
+        loadings, distribution across the cells, localisation in a cluster,
+        etc.)?
+      \end{itemize}
+    \item
+      Hyper parameter optimisation strategy
+    
+      \begin{itemize}
+      \tightlist
+      \item
+        Dask application for bayesian optimisation of hyper parameters to
+        maximise the LL while integrating over the number of topics selected
+      \end{itemize}
+    \item
+      Methods for isolating regions from region-topic annotations
+    
+      \begin{itemize}
+      \tightlist
+      \item
+        Compare motifs identified through thresholding, gamma distribution
+        threshold, top N approach, etc. Which produces the most reliable set
+        of motifs for the various topics?
+      \end{itemize}
+    \item
+      Applicability to a biological system: Erythropoesis
+    
+      \begin{itemize}
+      \tightlist
+      \item
+        Hyper parameter search using the Dask application
+      \item
+        Topic loadings are stage specific.
+      \item
+        Motifs represent biologically relevant transcription factors that
+        are active at each stage and recapitulate the dynamics of
+        erythropoesis
+      \item
+        Major topics are consistent across replications and the stages
+        always seperate based on topic loadings
+      \end{itemize}
+    \item
+      LDA recapitulates larger scale trends in chromatin accessibility:
+    
+      \begin{itemize}
+      \tightlist
+      \item
+        Topic distribution in the ENCODE project recapitulates large scale
+        trends in accessibility.
+      \item
+        Dig into a couple of the interesting topics and try to figure out
+        what they are doing here.
+      \end{itemize}
+    \item
+      Conclusion: LDA represents an interesting and useful method for
+      Unsupervised clustering of different cell types from bulk ATAC-seq
+    \end{itemize}
+    
+    \hypertarget{chapter-5-topic-modelling-prioritises-ocrs-in-mll-af4-recombinant-cells}{%
+    \subsection{Chapter 5: Topic Modelling Prioritises OCRs in MLL-AF4
+    Recombinant
+    Cells}\label{chapter-5-topic-modelling-prioritises-ocrs-in-mll-af4-recombinant-cells}}
+    
+    \begin{itemize}
+    \tightlist
+    \item
+      \textbf{Describe what the appropriate validation should be here. From
+      these results, I would like to see X, Y, Z experimental approaches.}
+    \end{itemize}
+    
+    \textbf{Main question}: \emph{What distinguishes MLL-AF4 from healthy
+    cells in terms of open chromatin?}
+    
+    \begin{itemize}
+    \tightlist
+    \item
+      LoT results in cleaner peak calls for topic modelling in MLL-AF4 cells
+    \item
+      RS4;11 and SEM can be merged to form a cohesive MLL-AF4 group
+    
+      \begin{itemize}
+      \tightlist
+      \item
+        Differential accessibility analysis between the two different cell
+        types. (What is different, and why is this not important.)
+      \end{itemize}
+    \item
+      Differential peak analysis between MLL-AF4 and BCP (B cell precursors)
+      to provide a baseline expectations of the regions we may see
+    \item
+    \end{itemize}
