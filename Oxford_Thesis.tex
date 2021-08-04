@@ -54,6 +54,7 @@
 % The science-type option: numerical in-text citation with references in order of appearance.
 \usepackage[style=numeric-comp, sorting=none, backend=biber, doi=false, isbn=false]{biblatex}
 \usepackage{glossaries}
+\usepackage{fancyvrb}
 %\usepackage{glossaries-extra}
 \newcommand*{\bibtitle}{References}
  
@@ -207,7 +208,7 @@
 \include{text/chapter1_intro}
 %\include{text/chapter2_smc}
 \include{text/chapter3_bm}
-%\include{text/chapter4_tm}
+\include{text/chapter4_tm}
 %\include{text/chapter5_nn}
 
 
@@ -216,8 +217,7 @@
 %    page that just says "Appendices" to signal the end of your main text.
 \startappendices
 % Add or remove any appendices you'd like here:
-%\include{text/appendix-1}
-
+\include{text/demographic_models}
 
 %%%%% REFERENCES
 
