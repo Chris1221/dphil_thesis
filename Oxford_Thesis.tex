@@ -24,11 +24,11 @@
 
 % This one will format for two-sided binding (ie left and right pages have mirror margins; blank pages inserted where needed):
 \listfiles
-\documentclass[a4paper,twoside]{ociamthesis}
+%\documentclass[a4paper,twoside]{ociamthesis}
 % This one will format for one-sided binding (ie left margin > right margin; no extra blank pages):
 %\documentclass[a4paper]{ociamthesis}
 % This one will format for PDF output (ie equal margins, no extra blank pages):
-%\documentclass[a4paper,nobind]{ociamthesis} 
+\documentclass[a4paper,nobind]{ociamthesis} 
 
 
 
@@ -58,12 +58,43 @@
 \usepackage{fancyvrb}
 \usepackage[textsize=tiny]{todonotes}
 \presetkeys{todonotes}{inline}{}
+\usepackage{listings}
+\usepackage{xcolor}
 %\usepackage{glossaries-extra}
 \newcommand*{\bibtitle}{References}
 \usepackage{hyperref}
  
 \input{text/abbreviations}
 %\setacronymstyle{}{long-short}
+
+
+
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolour}{rgb}{0.95,0.95,0.92}
+
+\lstdefinestyle{mystyle}{
+    backgroundcolor=\color{backcolour},   
+    commentstyle=\color{codegreen},
+    keywordstyle=\color{magenta},
+    numberstyle=\tiny\color{codegray},
+    stringstyle=\color{codepurple},
+    basicstyle=\ttfamily\footnotesize,
+    breakatwhitespace=false,         
+    breaklines=true,                 
+    captionpos=b,                    
+    keepspaces=true,                 
+    numbers=left,                    
+    numbersep=5pt,                  
+    showspaces=false,                
+    showstringspaces=false,
+    showtabs=false,                  
+    tabsize=2
+}
+
+\lstset{style=mystyle}
+
 
 % The humanities-type option: author-year in-text citation with an alphabetical works cited.
 %\usepackage[style=authoryear, sorting=nyt, backend=biber, maxcitenames=2, useprefix, doi=false, isbn=false]{biblatex}
@@ -189,12 +220,14 @@
 \tableofcontents
 
 \listoffigures
-	\mtcaddchapter
-% \mtcaddchapter is needed when adding a non-chapter (but chapter-like) entity to avoid confusing minitoc
+\mtcaddchapter
+%\mtcaddchapter is needed when adding a non-chapter (but chapter-like) entity to avoid confusing minitoc
 
 % Uncomment to generate a list of tables:
 \listoftables
-%	\mtcaddchapter
+\mtcaddchapter
+
+%\adjustmtc
 
 
 \printnoidxglossaries
