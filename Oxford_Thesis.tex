@@ -63,10 +63,28 @@
 %\usepackage{glossaries-extra}
 \newcommand*{\bibtitle}{References}
 \usepackage{hyperref}
- 
+\usepackage{cleveref} 
+
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{array}
+\usepackage{multirow}
+\usepackage{wrapfig}
+\usepackage{float}
+\usepackage{colortbl}
+\usepackage{pdflscape}
+\usepackage{tabu}
+\usepackage{threeparttable}
+\usepackage{threeparttablex}
+\usepackage[normalem]{ulem}
+\usepackage{makecell}
+\usepackage{xcolor}
+\usepackage{tabularx}
+
 \input{text/abbreviations}
 %\setacronymstyle{}{long-short}
-
+\setcounter{secnumdepth}{3}
+\setcounter{tocdepth}{3}
 
 
 \definecolor{codegreen}{rgb}{0,0.6,0}
@@ -168,9 +186,10 @@
 % do.  Throughout, 0 = chapter; 1 = section; 2 = subsection; 3 = subsubsection, 4 = paragraph...
 
 % The level that gets a number:
-\setcounter{secnumdepth}{2}
+\setcounter{secnumdepth}{3}
 % The level that shows up in the ToC:
-\setcounter{tocdepth}{2}
+\setcounter{tocdepth}{3}
+\setcounter{minitocdepth}{3}
 
 
 %%%%% ABSTRACT SEPARATE
@@ -232,6 +251,8 @@
 
 \printnoidxglossaries
 
+\listoftodos
+
 
 %%%%% LIST OF ABBREVIATIONS
 % This example includes a list of abbreviations.  Look at text/abbreviations.tex to see how that file is
@@ -247,8 +268,8 @@
 % Add or remove any chapters you'd like here, by file name (excluding '.tex'):
 \flushbottom
 \include{text/chapter1_intro}
-\include{text/chapter2_smc}
-\include{text/chapter3_bm}
+%\include{text/chapter2_smc}
+%\include{text/chapter3_bm}
 \include{text/chapter4_tm}
 %\include{text/chapter5_nn}
 
