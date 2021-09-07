@@ -5,7 +5,9 @@
 %  \qauthor{--- Cicero's \textit{de Finibus Bonorum et Malorum}}
 %\end{savequote}
 
-\chapter{\label{ch:1-intro} Latent Dirichlet Allocation for the Unsupervised Discrimination of ATAC-seq Experiments}
+\chapter{Identifying co-accessible regulatory regions using topic modelling}
+%\chapter{Regulatory Program Topic Modelling for ATAC-seq}
+%\chapter{Latent Dirichlet Allocation for the Unsupervised Discrimination of ATAC-seq Experiments}
 %\chapter{Machine learning, or something like that...}
 
 \minitoc
@@ -17,9 +19,74 @@
 
 \section{Introduction} \label{ch4:intro}
 
+The physical accessibility of \Glspl{cre} in part determines which and how many transcription factor proteins are able to bind to the \gls{dna}. This in turn regulates the process of transcription, controlling the expression of genes in a dynamic and contextual way \cite{Minnoye2021, Klemm}. Recent methods have permitted the profiling of chromatin accessibility on a genome-wide scale, however the role of the physical compaction of the genome and specific \glspl{cre} remains a poorly understood predictor of cell identity outside of niche model systems \cite{Schulz2019}. Understanding the dynamics of chromatin accessibility both between and within cell systems is of relevance to understanding the effect of sequence mutations that disrupt \glspl{tfbs} and which alter the availability of the entire \gls{cre}. Additionally, a thorough catalogue of relevant and distinct accessible elements within a pathological cell system would allow for improved prioritization of mis-regulated transcription factors and their genomic consequences. In this chapter, I aim to improve the characterization of regulatory programs through modelling chromatin accessibility with high throughput sequencing. The resulting method, BLDA, represents a viable approach to identify key regions of accessible chromatin that are both shared between similar cell types and discriminatory of others. I show that this method has similar power to identify important regions when compared to single cell ATAC-seq, and demonstrate its use on the well-characterised developmental stages between \glspl{hsc} and mature erythrocytes. The results here demonstrate that topic modelling is a reliable method for general purpose discrimination of important accessible regions in arbitrary collections of bulk \gls{atac} experiments.
 
+\subsection{Transcriptional regulation through chromatin accessibility}
 
-\subsection{Hyperparameters}
+Within the nucleus, DNA is packaged into a highly compact and organized structure known as chromatin. The construction of chromatin involves wrapping molecules of DNA around histone proteins. Typically, 147 base pairs of DNA wrap around an octomer of histone proteins to form the fundamental subunit of chromatin called a nucleosome. The density and positioning of nucleosomes along the sequence determines to a large degree the ability of macromolecules to bind to the sequence. Other factors such as the post-translational modifications of histone proteins and higher order organization of chromatin also contribute to functional chromatin accessibility. Nucleosomes tend to be found at lower densities within active regulatory regions, indicating the capacity of that region to bind transcription factors and chromatin re-modellers. 
+
+The accessible genome comprises between 2 and 3 percent of the actual sequence in humans, but represents approximately 90 percent of regions bound by \gls{tf} \cite{Thurman2012}. The ability of a \gls{tf} to bind does not in and of itself dictate that it will bind, but represents a regulatory capacity at the accessible site. \Glspl{tf} bind to sequence competitively with histones and other chromatin binding proteins to dynamically modulate the organization and placement of nucleosomes. While closed chromatin is generally not amenable to binding by \glspl{tf}, permissive chromatin is sufficiently dynamic to allow for some binding. Accessibility therefore exists on a continuum that is dynamically reorganized in part based on the cellular context and its battery of expressed transcription factors.  Profiling the accessible regions of the genome in a particular cellular context provides a window into active regulatory programs and their probable constituent transcription factors. 
+
+Several methods exist to experimentally determine chromatin accessibility. The majority of recent methods use an enzymatic reaction to selectively fragment the genomic sequence and next-generation sequencing to comprehensively survey the genome for the enrichment of fragments. Examples of these approaches include DNAse-seq, \gls{atac}, MNase-seq, FAIRE-seq, and NOMe-seq, reviewed in \textcite{Klemm} and \textcite{Meyer2014}. Of these, DNAse-seq is the most sensitive but requires a large number of cells to generate reliable libraries for sequencing \cite{Boyle2008}. ATAC-seq is a reliable method for characterising accessibility, applicable to systems with as few as 500 cells \cite{Corces2017}. Datasets generated with ATAC-seq have been growing exponentially year over year, representing in 2019 several times more data generated than any other approach for assaying chromatin accessibility \cite{Yan2020}. Thus, methods for the interpretation of large compendiums of ATAC-seq form a useful complement to the method's growing adaptation. 
+
+\subsection{Identifying regulatory programs in large databases}
+
+The task of identifying co-accessible sets of regulatory elements usually falls on differential peak accessibility analyses \cite{Yan2020}. Many methods exist for this task, including MACS2, DiffBind, csaw, voom, limma, edgeR, and DESeq2 \cite{Ritchie2015,Law2014,Love2014,Robinson2009,StarkRandBrown2016,Lun2015,Zhang2008}. A comprehensive review of their relative performances was undertaken by \textcite{Reske2020}. In general, these methods work by grouping similar experiments, usually taken to be biological replicates, and finding peak regions whose deviation overcomes some level of statistical significance. These tools are highly refined and benchmarked for applications with two cell types of interest. However, using differential accessibility in large systems with multiple consistent subpopulations poses technical issues. As an example, edgeR is able to estimate coefficients for a general linear model and find significant differences in accessibility for a particular cluster. However, the estimation of statistical significance relies on estimating variance with biological replicates, and the user is warned not to attempt significance testing without performing replicates \cite{Robinson2009}. Though this places no hard constraint on the data to be analysed, clustering in large datasets is imperfect. The estimation of the variance is therefore critically reliant on the homogeneity of the cluster, which may vary between clusters. This makes the interpretation of differentially accessible elements between clusters in large datasets difficult. Secondly, it is difficult to use differential accessibility testing to find patterns unique to combinations of clusters, as the estimated coefficients tend to relate to enrichment in a specific cluster, or between all of them. One alternative is to look at the pairwise differential accessibility between clusters and search for patterns in the identified regions. This is, however, onerous and to our knowledge no dedicated method exists for the task.  
+
+Recently, \textcite{BravoGonzalez-Blas2019} proposed the use of topic modelling to study collections of accessible regions in single cell \gls{scatac}. Topic modelling, specifically \gls{lda} represents a viable method for the unsupervised identification of key regions of accessible sequence in large databases, while simultaneously identifying the distribution of their associated regulatory programs. The method learns groupings of differentially accessible elements and where they tend to be active, in aggregate. However, the use of LDA in large collections of ATAC-seq data has not been explored. As the amount of available ATAC-seq data grows year over year, analyses of large compendiums of cellular variation in accessibility form a useful complement to sparse single cell analyses. On the one hand, single cell analyses are well powered to identify fine-scale groupings of regulatory elements active in sub populations of similar cell types. On the other, analysis of dense bulk ATAC-seq with high read depths allows for a thorough investigation of pathways active across large groupings of cells. In this chapter, we investigate the use of LDA for identifying regulatory programs and their distribution in bulk \gls{atac}.
+
+\subsection{Latent Dirichlet Allocation}
+
+A detailed methodological motivation of \gls{lda} is beyond the scope of this chapter, however here I present in general terms a typical formulation of the generative model and inference from real data.  
+
+\subsubsection{The generative model}
+
+LDA is interested in the generation of a corpus of $D$ documents, composed of $n$ words. It was introduced in \textcite{Blei2003}. In brief, each document $d = 1 \ldots D$ can be described as a collection of weights on $k$ topics. An example in the realm of natural language processing would be books and their respective genres (i.e. fiction, science, etc.). In the specific application here presented, the corpus represents the dataset of sequencing experiments, with each document representing a single ATAC-seq sample. The words are individual accessible regions, which are determined and discretized through peak calling on respective samples. The inference procedure is unsupervised, and there is no annotation or metadata given to discriminate amongst samples, unlike later adaptations like structured topic modelling \cite{Roberts2019}.
+
+The generative process is as follows. For a fixed number of topics $k$, each document $d$ is given a distribution on its topic weights $\theta_d$ $$ \theta_d \sim Dir(\alpha), d = 1, \ldots, D $$ Each word $n$ in document $d$ is generated from a particular topic $z_{dn}$ where  $z_{dn}$ $$ z_{dn} \sim Discrete(\theta_d) $$ and the word itself is chosen from $$ p(w_{dn} | z_{dn}, \zeta) $$ which is a multinomial probability conditional on the topic allocation $z_{dn}$. The other dependency is on $\zeta$, here defined as a $k \times N$ matrix where $\zeta_{ij} = P(w_j =1 | z_i = 1)$, or the conditional probability of a word given a topic allocation. This is a fixed quantity that will be estimated. 
+
+The Dirichlet distribution is convenient in this case, as draws from $Dir(\alpha)$ represent points on the ($k-1$) simplex where parameter $\alpha$ is a $k$-vector of positive reals. A simplex is a multidimensional generalization of the triangle. In addition, the dirichlet distribution is the conjugate prior to the multinomial distribution, a fact which is exploited for efficient inference algorithms. Explicitly, the probability density function of the Dirichlet distribution here considered is given by 
+
+$$ p(\theta | \alpha ) = \frac{\Gamma(\sum^k_{i=1} \alpha_i)}{ \prod^k_{i=1} \Gamma(\alpha_i)} \theta_1^{\alpha_1 -1} \ldots \theta_k^{\alpha_k-1} $$ which leads to an overall joint distribution and probability of an overall corpus as given in \textcite{Blei2003}.
+
+This traditional set up for LDA does not allow for any control over the sparsity of word allocations to topics. For that, an extension called Smoothed LDA replaces the $\zeta$ matrix of conditional word probabilities with a second Dirichlet distribution, parameterized by $\beta$. As a side note, all of the applications of LDA in this chapter are concerned with symmetric Dirichlet distributions, where each of the entries of the $\alpha$ and $\beta$ $k$-vectors are the same. This modified generative procedure proceeds identifically, except that a seperate draw is made for each topic representing the distribution on its words from $$ \psi_k \sim Dir(\beta), k = 1, \ldots, K $$, and drawing a word conditional on its topic assignment is instead generated as $$w_{dn} \sim Discrete( \psi_{z_{dn}})$$ where $\psi_{z_{dn}}$ intuitively represents the topic-word distribution. In the case here considered, it represents the importance of a particular region of accessible chromatin to a regulatory program $z$.
+
+\subsubsection{Parameter inference}
+
+The joint distribution of latent parameters $\theta, z$ conditional on $w, \alpha, \beta$ does not admit analytical inference as the posterior probability is intractable, as noted in \textcite{Blei2003}. They proposed an approach based on variational Bayesian inference, however it has become commonplace to integrate out $\theta$ and approach the problem of inference using collapsed Gibbs sampling \cite{Qiu2014,Magnusson2018,Park2019}. Gibbs sampling is an extension of the \gls{mcmc} approach for sampling from the posterior distribution when, as is the case here, analytical inference is not possible. Gibbs sampling is closely related to the Metropolis-Hastings algorithm, and relies on constructing a markov chain with the previously described posterior as its equilibrium distribution. In this way, inference about parameters is deduced from direct samples of the posterior. This is philosophically very similar to the approach taken in Chapter 3, where samples of the posterior distribution of geneologies conditioned on mutations were used to draw inference about demographic parameters such as directional migration. The details of the inference procedure are not of direct relevance to the results presented in this chapter, and a more detailed description can be found in \textcite{Qiu2014} and others.
+
+Here, the posterior distribution of interest concerns the most likely values of $\theta$ and $\psi$, that is the topic weight vectors on each of the different ATAC-seq experiments and the topic distribution on each of the constituent accessible regions, conditioned on observed regions within ATAC-seq experiments and given parameters $\alpha, \beta$.
+
+\subsection{The LDA algorithm and cisTopic}
+
+The basis of this chapter is the cisTopic algorithm, and some expansion on its basic formulation is necessary. cisTopic is introduced in \textcite{BravoGonzalez-Blas2019}, and is primarily intended for use on \gls{scatac} data resulting from a combination of sequencing data and associated peak calls. In general, this data is either encoded in a count matrix or it is internally converted to one. A count matrix $M$, for the purposes of this chapter, refers to a $C \times R$ matrix where element $M_{cr}$ equals the number of reads (or fragments) overlapping region $r$ in cell $c$, for regions $r=1,\ldots,R$ and cells $c=1,\ldots,C$. Each region $r$ is selected on the basis of statistical peak calls, typically performed with software such as Macs2 or similar, on the aggregated \gls{scatac} signal. This count matrix $M$ is then subjected to binarisation on the basis of some threshold $T$, where $T$ is the minimum number of counts necessary for a region to be declared accessible. This threshold reflects the low sequencing depth of \gls{scatac} data, and the difficulty in comparing cells quantitatively based on read counts alone without some correction for depth. This threshold is set to 1 by default in the stable version of the algorithm implementation.
+
+The corrected count matrix is used for the inference of the cell-topic distribution and the region-topic distribution, previously represented by $\theta$ and $\psi$ respectively as the distribution of topics over documents and the distribution of words over topics. Topic loadings for both the cell and region loadings are normalized to the range [0, 1]. Key regions which are important to the topic may be selected in one of two ways. Firstly, by fitting a gamma distribution to the normalized region-topic loadings on a per-topic basis and selecting a percent point threshold of the resulting density's tail (i.e. the top 1 percentile of the fit gamma distribution). Alternatively, a given number of top regions may be selected based on the rank of the region-topic loadings.  
+
+Selecting the right number of topics for a particular analysis is not straight forward. cisTopic implements an optimized version of collapsed Gibbs sampling by using WarpLDA, an algorithm for constant time inference \cite{Chen2016a}. An advantage of warpLDA is that it returns the second derivative of each value for $k$. As loglikelihood values increase with increasing $k$, cisTopic makes use of these values to automatically select a value for $k$ based on a range given by the user. A proof that this procedure produces optimal values of $k$ is not readily available. 
+
+\subsection{Aims of this chapter}
+
+The overarching aim of this chapter is to investigate the use of LDA for bulk \gls{atac}. As noted above, the method represents a significant advancement above differential accessibility, and shows theoretical promise for the analysis of the growing collections of sequencing data in diverse cell systems. In doing so, I adapt the existing cisTopic method for bulk samples. Specifically, I investigate the performance of bulk LDA when compared to established \gls{scatac} inference using cisTopic. I also investigate whether the method infers meaningful topic loadings on a well understood system with ground truth values to compare against, erythopoiesis.   
+
+% What is the goal. 
+%   Identify important discriminatory regulatory elements and how they are shared amongst groups of cells. 
+% Why LDA?
+%   differential peak analysis can decide a statistical threshold for two different cell types.
+%   there are many different methods for DA analyses MACS2, DiffBind, csaw, voom, limma, edgeR, and DESeq2 [27,28,29,30,31,32,33]
+%   it is sensitive to the normalisation and data processing, given how these interact with the statistic model of choice (https://epigeneticsandchromatin.biomedcentral.com/articles/10.1186/s13072-020-00342-y)
+%   Impractical to perform pairwise comparisons and attempt to infer patterns in this by eye.
+%   Some approaches exist to look at pathways of cells (citation here??? ) during differentation. However, the problem of identifying both common and discriminatory regulatory elements remains open. 
+%   Recently LDA has been proposed to look at the accessibility of dna in single cell atac-seq.
+
+%   Advantages:
+%     no assumption that a region is important only to a certain cell type or topic. A single region can contribute to many different topics, in different contexts.
+%     consider groupings of elements as important, gives annotation to grouops of regions more so than answering the question of "what it different", it is answering, what is important 
+
+%   Disadvantages:
+%     Bag of words assumes no direct interaction betewen regions. Though there is biological rationale to consider how regions interact with each other, it is difficult to formulate this beyond co-occurance.
+
+% Discussion should include somethign about there being more comprehensive models of topic modelling like structured topic modelling (stm package and https://cbail.github.io/SICSS_Topic_Modeling.html)
 
 \section{Methods} \label{ch4:methods}
 
@@ -59,6 +126,9 @@ The BLDA method is a small extension to cisTopic which aims to incorporate a pro
 
 To get a measure for the number of topics to use in a particular model, we compute the average fold enrichment. This is done with a two step process. First, a one-tailed student's T test is performed for each of the grouping of cells. The cells are split into one of the cell types, with the remainder forming the comparison group. The null hypothesis here is that the means do not differ, or that the comparison group is significantly smaller than the group under question. The P values are corrected for the number of comparisons using Bonferroni correction (multiplying by the number of effective tests, which in this case is the number of tests) and the significant associations are reported. Second, the differences in the estimated means are divided to form a fold change metric amongst the subset of significant topic associations. We take the median of these values to form the average fold change metric for a particular set of topics being modelled. The median is selected to avoid extreme results overly biasing the statistic.
 
+\subsection{Coenrichment of topics}
+
+The number of times two topics $i$ and $j$ are co-enriched is defined to be the count of occurrences where a single cell type has a topic loading for $i$ and $j$ exceeding some pre-defined threshold. After some experimentation, we decide to use a threshold of 0.25, where the two co-enriched topics collectively form half of the normalised topic-loadings. 
 
 \section{Results} \label{ch4:results}
 
@@ -289,39 +359,146 @@ The smallest $k$ topics forces sharing between similar cell types (\Cref{fig:lud
   \label{fig:ludwig_motifs_8}
 \end{figure}
 
+\subsubsection{BLDA identifies relevant pathways active in Erythropoiesis}
+
 A combination of the motifs identified as well as the groupings of regions allows for a deeper interrogation of the uncovered biology.
 
-\textcite{Ludwig2019} identified several regions of the genome with substantial impacts on the process of Erythropoiesis. Of these, there are no overlaps between UROS, CCND3, VEGFA, and TMCC2 in the set of selected keyword regions. 
+\textcite{Ludwig2019} identified several regions of the genome with substantial impacts on the process of Erythropoiesis. Of these, there are no overlaps between UROS, CCND3, VEGFA, and TMCC2 in the set of selected keyword regions. However, the promoter region for the Rh associated glycoprotein (RhAG), which is not accessible in HSC, MPP, or CMP cells, shows a progressive increase in accessibility throughout erythropoesis, as shown in \Cref{fig:RhAG}. A keyword region for topic 2 is located in its promoter. Topic 2 mirrors the accessibility patterns of RhAG, showing  which also is shown to be inactive in early hematopoesis and increasing in accessible after lineage commitment, peaking in BasoE cells. Other examples of individual regions which mirror topic loading patterns are readily apparent, such as the R3HDM4 locus, which is also a key region for topic 2 (\Cref{fig:r3hdm4}). 
+
+To comprehensively survey the closest annotated protein coding genes, bedtools was used to find the nearest genic regions to each of the key regions for the different topics. \textcite{Mello2019} recently surveyed differentially accessible genes throughout different phases of erythoiesis. These genes are compared against the nearest genic regions for the top 500 keyword regions from each of the topics. The results illustrate a close match between topic activation patterns and the underlying biology of blood cell differentiation.
+
+Topic 1, active in early lineage commitment, include critical proteins for erythropoiesis such as STAT5A and STK3. STAT5a is predominantly expressed in early erythropoesis \cite{Pishesha2014}. The regions are enriched for the binding motifs of GATA2, GATA3, KLF1, and KLF12. GATA3 is typically associated with lymphoid precursors and committed T cells, recent results indicate a more ubiquotous role within hematopoesis \cite{Chen2001}. The topic shows no overlap with genes involved in apoptosis, unlike later topics.  
+
+Topic 2 represents the main inferred mid-to-late erythropoesis grouping of regulatory elements. It contains the majority of important proteins involved in iron homeostasis and mitochondrial transportation (SLC25A38), heme production (ALAS2), regulation of cellular differentiation (SP1). In addition, SP1 represents the first protein involved with enucleation. An gene set enrichment analysis showed subenrichment for "Positive regulation of erythrocyte differentiation", indicating that a significant portion of the genes identified relate to erythropoiesis. Additional terms identified include "tetrapyrrole biosynthetic process", "tetrapyrrole metabolic process", and "pigment metabolic process". \todo{Table for the GO enrichment with panther} 
+
+Topic 3 peaks in activity amungst orthochromatic erythroblasts, and also has some representation in early hematopoesis, as well as committed T cells. Topic 3 includes NRF1, a knockout of which leads to embryonic lethality due to impaired fetal liver erythropoiesis \cite{Chen2001}. GLRX5, predominantly expressed in late erythropoesis by poly and orthochromatic erythroblasts (Fig 1c \cite{Pishesha2014}) is also amungst the nearest key genes, along with FOXO3 and PPP2R1A \cite{Mello2019}. Topic 3 also shows enrichment for a large number of motifs, indiciative that a number of identified peak regions are not directly involved in protein coding but are intergenic enhancer elements (\Cref{fig:ludwig_motifs_8}).
+
+Early hematopoesis is represented by topics 6 and 8, which are only associted with a handful of genes associated with erythropoesis (\Cref{table:mello_genes}). HIP1 is known to be crucial to successful hematopoesis and LYN is involved in the successful proliferation of hematopoetic cells \cite{Oravecz-Wilson2004, OLaughlin-Bunner2001}. Motifs in these regions include ARID3a, known to be expressed in HSCs, and MEIS1, also involved in early hematopoesis \cite{Zeddies2014,Miller2016, Ratliff2020}. 
+
+These results indicate that BLDA has identified regions which correspond to realistic regions of differential accessibility throughout the process of erythropoesis. Though the method is not specific, in that many important regions are not represented amungst the results.  
+
+
+
+%Later stages of erythopoesis, characted by ..., are also represented within the dataset. FOXO3, PPP2R1A known to be upregulated towards the end of the process, was identified within topic 3.  Topic 2 contained later genes such as TXNRD2, 
+
+
+
+
+%Regions crucial for erythroid differentiation and survival are represented across the key regions for relevant topics. For example, topic 1 contains the promotor of STAT5a, topic 2 covered the ALAS2 gene, PARK7 is found in topic 3
+
+%Different regions of FOXO3, a gene involved in immune response, were found associated with topics 3, 7, and 1. 
+
+%Topic 2 
 
 
 \begin{figure}
-  \centering
-  \includegraphics[width=\textwidth]{plot/ch4/GATA3.pdf}
-  \caption[GATA3 Promotor]{Coverage plot of the GATA3 promoter. BLDA identifies this region as discremintory for CD4 and CD8 T cells, and coverage plot indicates that it is differentially accessible between erythopoetic and terminally differentiated lymphocytes.}
-  \todo{Why is the other beds peaking through???}
-  \label{fig:gata3}
+  \begin{subfigure}[b]{0.5\linewidth}
+      \centering
+      \includegraphics[width=\textwidth]{plot/ch4/RHAG}
+      \caption{The RhAG promoter}
+      \label{fig:RhAG}
+  \end{subfigure}
+  \hfill
+  \begin{subfigure}[b]{0.5\linewidth}
+    \centering
+    \includegraphics[width=\textwidth]{plot/ch4/R3HDM4}
+    \caption{R3HDM4}
+    \label{fig:r3hdm4}
+  \end{subfigure}
+
+  \caption{Accesibility at two keyword regions for topic 2 among cells in the erythropoetic differentiation trajectory. }
+    
 \end{figure}
 
+\clearpage% Flush earlier floats (otherwise order might not be correct)
+%\thispagestyle{empty}% empty page style (?)
+\begin{landscape}
 
-Topic 1:
-  - Stat5a promotor is one of the most important regions. Stat5a is 
-    -  regulation of RBC production by expansion of earlier progenitor and stem cell populations.
-    - topic 1 esxpression starts early and ramps up through erythropoesis
-    - (and 2) share a peak with MiR584. What role does this play?
+  \begin{table}
+  %\resizebox{\textwidth}{!}{
+    \tiny
+\begin{tabularx}{\hsize}{|X|X|X|X|X|X|X|X|X|}
+  
+  \toprule
+Category & Topic  1 & Topic  2 & Topic  3 & Topic  4 & Topic  5 & Topic  6 & Topic  7 & Topic  8\\
+\midrule
+Anti-apoptosis & CTSB & MKL1, BCL2L1, CTSB, NR3C1 & CITED2, PGAP2, TNFAIP3 & PDPK1 & HSPA9, NFKB1 & NA & NA & NA\\
+Cellular component involved in apoptosis & ACTN4, KPNB1 & CDH1, KPNB1, GSN & PSMB1, RB1CC1 & ACTN4 & VIM & PSMB1 & DBNL & NA\\
+Erythroblast enucleation & NA & SP1 & NA & NA & NA & NA & NA & NA\\
+Erythrocyte differentiation & STAT5A & ALAS2, SLC25A38, BPGM, ERCC2 & CITED2, BPGM & NA & HCLS1, NCKAP1L & LYN & BPGM, DYRK3 & NA\\
+Hematopoiesis \& regulation of cell differentiation & GFI1B, ZBTB16, TXNRD2 & BCL11A, SP1, TXNRD2 & GLRX5, PPP2R1A & TTC7A & IKZF1 & ZBTB16, LYN & IKZF1, CDK6, TTC7A & ZBTB16\\
+Heme metabolism & ALAD, BLVRB, TMEM14C & ALAD, ALAS2, BLVRB, FECH, HMBS, SLC25A38, SPTA1, UROD & ALAD & FECH & NA & NA & NA & NA\\
+Induction of apoptosis & LGALS1, MAPK1, SPN, DAPK2, SAP30BP, VAV1 & KAT2B, RBM38, TP53BP2, AKAP13, ERCC2 & BCLAF1, PPP2R1A, STK17B, TP53BP2, BTG1, NMT1 & CUL3, KAT2B, HIP1 & RBM38, MAP3K5, APP & HIP1 & HIP1 & MAP3K5\\
+Iron homeostasis & NA & UROD & FBXL5, SLC25A28 & NA & NA & NA & NA & NA\\
+Oxygen homeostasis/ response to hypoxia or to oxidative stress & ACTN4, MLH1 & HMBS, STAT5B, ERCC2, NRF1, PTK2B & CAT, CITED2, MLH1, OXSR1, PARK7 & ACTN4, PTK2B & ECE1, NFKB1, NR4A2 & IPCEF1 & NA & CAT, IPCEF1\\
+Primitive hematopoiesis & STK3 & NA & NA & NA & NA & NA & NA & NA\\
+\bottomrule
+  \end{tabularx}
+  %}
 
-  Topic 8 (and 5)
-    - CGAS is widely expressed but especially in hematopoetic progeneitors (https://www.frontiersin.org/articles/10.3389/fimmu.2020.573915/full)
+  \caption{Genes from \textcite{Mello2019} represented in the closest genes set of 500 keyword regions for each of the eight BLDA topics grouped by function.}
+  \label{table:mello_genes}
+  \todo{This table is really ugly. Will fix. }
+\end{table}
+\end{landscape}
+\clearpage% Flush page
 
-Topic 2
-  - Many of the systems like UROS, CCND3, VEGFA, and TMCC2 are not found in this system.
-  - RHAG is found, peak accessibility in BasoE and the topic it is found in peaks with BaseO. 
-  - HDAC6, some role in enucleation,not completelysure (https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5451330/)
 
-Topic5:
-  - Has a promotor for GATA3. Maybe because this is not accessible in CD8 and CD4? But in everything else? 
-    - Motifs found in almsot every other cell type
-  - Actually also important for t cells https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3688666/
+%  \begin{figure}
+%  \centering
+%  \includegraphics[width=\textwidth]{plot/ch4/GATA3.pdf}
+%  \caption[GATA3 Promotor]{Coverage plot of the GATA3 promoter. BLDA identifies this region as discremintory for CD4 and CD8 T cells, and coverage plot indicates that it is differentially accessible between erythopoetic and terminally differentiated lymphocytes.}
+%  \todo{Why is the other beds peaking through???}
+%  \label{fig:gata3}
+%\end{figure}
 
-Early: 
-  - Arid3a / bright (6)
-  - MEIS1 is expressed prefernetially in HSCs (https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3525022/)
+
+%Topic 1:
+ % - Stat5a promotor is one of the most important regions. Stat5a is 
+ %   -  regulation of RBC production by expansion of earlier progenitor and stem cell populations.
+ %   - topic 1 esxpression starts early and ramps up through erythropoesis
+ %   - (and 2) share a peak with MiR584. What role does this play?
+
+
+%  Topic 8 (and 5)
+%    - CGAS is widely expressed but especially in hematopoetic progeneitors (https://www.frontiersin.org/articles/10.3389/fimmu.2020.573915/full)
+
+%Topic 2
+%  - Many of the systems like UROS, CCND3, VEGFA, and TMCC2 are not found in this system.
+%  - RHAG is found, peak accessibility in BasoE and the topic it is found in peaks with BaseO. 
+%    - Expressed in mature 
+%  - HDAC6, some role in enucleation,not completelysure (https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5451330/)
+%  - R3HDM4 is accessible in all of the cells, but differentially so. 
+  %  - It's expession (RNA-seq) is associated with erythropoesis https://genevatool.org/gse_description?gene_name=R3HDM4&gse_id=GSE102182
+  %  - Experssed in mature Erythrocytes https://genevatool.org/gse_description?gene_name=R3HDM4&gse_id=GSE63703
+
+
+
+% Topic5:
+ % - Has a promotor for GATA3. Maybe because this is not accessible in CD8 and CD4? But in everything else? 
+   % - Motifs found in almsot every other cell type
+ % - Actually also important for t cells https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3688666/
+
+%Early: 
+%  - Arid3a / bright (6)
+%  - MEIS1 is expressed prefernetially in HSCs (https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3525022/)
+
+\section{Discussion}
+
+Recently, the use of \gls{atac} to characterise chromatin accessibility in varied cell systems has resulted in an excess of high quality data. However, it is currently difficult to integrate these data and perform inference for common regulatory programs. In this chapter, I adapted the cisTopic approach for using \gls{lda} to simultaneously infer weighted collections of co-accessible regions and the cell types in which they are active. I show that the method, BLDA, is able to identify a similar number of differentially expressed regions (as defined by EdgeR) as the established \gls{scatac} pipeline in a collection of pseudobulked single cell experiments with known cell types. The modification was essential to its comparative success, as a naive implementation of the cisTopic algorithm using region thresholding and one-hot encoding did not identify any of the same differentially accessible regions as the single cell analysis. BLDA additionally identified topics which were much more specific to target cell types than the naive implementation, as is expected in a purpose-built dataset of dissimilar cell types (\Cref{fig:pb_no_thresh_lot_topics}). This simple dataset shows that BLDA is able to recreate some of the success of the single cell method in bulk samples, so I next turn to a well understood system of differenting cell types. Erythropoiesis, the process by which \glspl{hsc} differentiate into red blood cells, or here more specifically immature erythroblasts which have not yet undergone enucleation, has an extensive literature documenting genes which are up and down regulated at various check points \cite{Ludwig2019}. We take sequencing data from \textcite{Ludwig2019} and \textcite{Corces2016} and create a pseudo-timed differentiation trajectory incorporating hematopoietic precursors and erythropoietic check points, as well as stages of the lymphoid differentiation pathway incorporating CD4 and CD8 positive T cells. I show that in this system as well, the BLDA method out performs a naive implementation of cisTopic, identifying specific topic loadings that are enriched for the regulatory biology of erythropoiesis. Infered topics identify regions of the genome which are shown to be differentially accessible in similar patterns to topic loadings across pseudo-time such as \Cref{fig:RhAG} and \Cref{fig:r3hdm4}. 
+
+Having established that BLDA has power to find biologically enriched pathways within topic loadings, the next chapter applies the algorithm to large scale datasets of ATAC-seq experiments like ENCODE and uses them to investigate cell types with relatively unknown regulatory grammar.  
+
+\section{Data and Code Availability}
+
+Single cell sequencing experiments from \cite{Buenrostro2015} are available via SRA, and scripts for performing peak calling and pseudobulking are distributed with the BLDA package at \url{https://github.com/Chris1221/BLDA}. This package also contains functionality for creating count matrices from BAM files and bigWig tracks in order to run the adapted analysis pipeline. A modified version of cisTopic necessary for running these analyses is available at \url{https://github.com/Chris1221/cisTopic_bulk}. 
+
+Data for the erythropoiesis developmental trajectory is available from GEO, with more details about specific file formats available from the original publications \textcite{Corces2016} and \textcite{Ludwig2019}.
+
+An implementation of LanceOTron peak caller for batch data is available from \url{https://github.com/Chris1221/LanceOTron}.
+
+A Snakemake pipline for replicating the entirety of the analyses presented in this chapter is available in the chapter\_3 subdirectory of \url{https://github.com/Chris1221/thesis_lda} repository.
+
+\section{Acknowledgments}
+
+The original conception of the BLDA extension, that is incorporating read counts rather than binary accessibility into the count matrix, came from Alastair Smith. Single cell experiments were downloaded and combined into a single BAM file by Emine Ravza Gur. Alignment and quality control of the datasets from \textcite{Corces2016} and \textcite{Ludwig2019} was performed by Damien Downes. 
