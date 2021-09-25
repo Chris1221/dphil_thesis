@@ -56,6 +56,8 @@
 
 \subsubsection{Identifying MLL-AF4 specific accessibility patterns}
 
+
+
 Within the context of the entire ENCODE dataset, the MLL-AF4 cells were indistinguishable from the closely related B cell precursors. In order to identify differences between them, the model would need a very large number of topics, sufficient to explain all of the detailed similarities between the diverse set of celltypes represented in the dataset. This is computationally difficult, and risks over-parameterizing the data. A reasonable alternative is a detailed examination of these cells in isolation, and a comparison to the results generated in the larger model. In this section, I create a topic model with just the cells of interest and attempt to differentiate them based on patterns in accessible chromatin using BLDA.
 
 We once again use lanceotron to call peaks from the different cell lines. The number of called peaks differed significantly between experiments (\Cref{fig:mll_peak_calls}A). The most peaks were found in SEM and RS4;11, and the fewest were identified in Patient 3. In the latter case, it is suspected that the known low quality of this sample affected the sequencing, causing an anomalously low number of peaks to be identified. To confirm this, we use megadepth to calculate the average read coverage under identified peak regions \cite{Wilks2021} (\Cref{table:mll_cov}). Unexpectedly, patient 2 showed comparable read coverage to the other samples, while Patient 3 had anomalously low read coverage under the identified peak regions. An unremarkable number of peaks were identified in patient 3. The remainder of the samples have high coverage values sufficient to identify high quality peaks. These results encourage caution when interpreting any topic modelling on both patients 2 and 3.  
@@ -186,7 +188,7 @@ The $k=5$ OHE analysis consistently identifies at least one topic which is activ
 
 The inferred topic loadings in the BLDA case are also reproducible across replicates (\Cref{fig:mll_reps}A). In each of the 10 replicates, one topic loads preferentially onto Patients 1 and 2, and to a lesser degree onto patients 3 and 4. Another loads preferentially onto RS411 and SEM. The remainder are somewhat divided between a common co-accessibility program amongst all samples (i.e. topic 3 in replicate 5), specifically loading onto PPB (i.e. topic 5 in replicate 6), or PB (Topic 5 in replicate 0). In general, each of the replicates has at least one topic that falls into each of these categories, though the loadings onto the \gls{bcp} are less consistent than the MLL-AF4 cells. The topics loading onto RS411 and SEM were highly specific to those two samples, in contrast to the BCPs whose specificity was much lower, and additionally much more variable (\Cref{fig:mll_reps}B).  The BCPs additionally had many topics annotated to them at low levels, but very few with a higher annotation level of 0.5 (\Cref{fig:mll_reps}C).  This is in contrast to Patients 1 and 2, who had both a large number of highly specific topics across the replicates, and also a very low number of non-specific topics.  From this we conclude that similar topics are able to be found consistently across replicates.  
 
-Having established a high degree of specificity for individual topics to the expected annotations of the samples, we investigate the regions making up the topics. We briefly focus on a single replicate, indexed as 0 in \Cref{fig:mll_reps}. An interesting avenue for exploration is the degree to which the topics are made up of similar regions. If they were, it would represent a shared core of co-accessible elements. The alternative, of completely separate underlying regions, is equally interesting. An understanding of the region-topic distribution over cell types will aid in the interpretation of the key regions for particular topics. We transform each region-topic vector to $Z$-scores by subtracting the mean and dividing by the standard deviation of the distribution, and count the number of regions with a $Z$-score over 3 (98.8 percent of a theoretical standard normal distribution) in each of the topics (\Cref{fig:mll_region_sharing}). 
+Having established a high degree of specificity for individual topics to the expected annotations of the samples, we investigate the regions making up the topics. We briefly focus on a single replicate, indexed as 0 in \Cref{fig:mll_reps}. An interesting avenue for exploration is the degree to which the topics are made up of similar regions. If they were, it would represent a shared core of co-accessible elements. The alternative, of completely separate underlying regions, is equally interesting. An understanding of the region-topic distribution over cell types will aid in the interpretation of the key regions for particular topics. We transform each region-topic vector to $Z$-scores by subtracting the mean and dividing by the standard deviation of the distribution, and count the number of regions with a $Z$-score over 3 (98.8 percentile of a theoretical standard normal distribution) in each of the topics (diagonal of \Cref{fig:mll_region_sharing}A). We additionally count the regions with a $Z$ score of 3 or higher in both of two different topics and find generally low region sharing overall, except in the case of topics 2 and 5 where 330 regions were enriched for both(off-diagonal elements of \Cref{fig:mll_region_sharing}A). Topics 2 and 5 in this replicate were enriched for PB cells and all BCP respectively. The regions selected as a part of this set had higher read counts in BCP samples than MLL-AF4 samples (\Cref{fig:mll_region_sharing}B).  This indicates a high degree of co-accessibility between important regions in PB and PPB cells. In contrast to this, few regions were shared between the two MLL-AF4 topics. The regions with topic 1 loadings over a $Z$ score of three were more accessible in the patient samples, though this was not a statistically significant difference (\Cref{fig:mll_region_sharing}C). However, the small number of important regions for the RS411/SEM topic were more accessible in these cell types (\Cref{fig:mll_region_sharing}).
 
 \begin{figure}
     \centering
@@ -196,14 +198,171 @@ Having established a high degree of specificity for individual topics to the exp
 \end{figure}
 
 
+We sought to understand how reproducibly these regions were identified between replicates. 
+Regions robustly identified as being associated with a topic that loads highly onto a desirable set of samples represent key candidates for further investigation.
+We identified the top 100, 250, and 500 regions for each topic in each replicate, and found how many of these regions are shared between 8, 9, or all of the replicates (\Cref{fig:mll_region_repro}A). Patients have the highest key-word topic reproducibility across replicates, with 76 of the top 100 identified in every single replicate. The patient group has the lower number of unique regulatory elements identified for any threshold (\Cref{fig:mll_region_repro}B). Amongst the 76 reproducibly identified regions, average expression is almost threefold higher in patients than the remainder of samples (mean of patients = 11321.8, mean of other = 4291.5, Student's $T$-test $P$ value for difference < 2.2e-16). These regions therefore represent a prioritized set that is both important for the highly-specific topic modelling approach and identified in each of the ten replicates. 
+
+Deriving some idea of functional characteristics from an abitrary set of genomic regions is difficult. Evolutionary conservation, biochemical properties such as histone modifications, and studying genetic mutations can all lend some degree of credibility linking a collection of regions to a particular pathway of interest \cite{Kellis2014}. Within the context of this sample, understanding the role of these regions is additionally confounded by the fact that they are derived from blastic, malignant cancer cells. Practically, this means that they may contain somatic mutations not represented in the reference panel. At present, there is no reliable, published, method for calling mutations from peak-based NGS experiments. Even if this data were available, it would be difficult to differentiate between accessibility as a consequence of cellular environment and differential evolution from that caused by genetic differences. The interpretation of the functional role of regions identified herein is hampered by a lack of functional validation due to the timelines imposed on this thesis.  
+
+\begin{figure}
+    \centering
+    \includegraphics[width=\textwidth]{plot/ch5/mll_top_regions_bigwig.pdf}
+    \caption[A subset of patient specific regions are highly reproducible across replicates and are enriched for lncRNA genes.]{A subset of patient specific regions are highly reproducible across replicates and are enriched for lncRNA genes. A. For each of the 100, 250, or 500 top regions per manually annotated sample specific topic, the number of regions occuring in eight or more, nine or more, or all of the ten replicates is plotted. B. The intersection of all regions identified across replicates for each set of sample-specific topics. C. RPKM profile for the 76 regions identified in A as being highly reproducible. D. Gene type annotation from refseq for closest annotated genes for the same regions.}
+    \label{fig:mll_region_repro}
+\end{figure}
+
+We begin our characterization of these regions by finding their closest annotated gene body. 32 of the 76 regions lie directly within genic regions. The remainder tend to be found within 50kb of the nearest gene, but the distance is highly variable and some regions are as far as 200kb from their closest gene (\Cref{fig:mll_lnc}A). This distance distribution fits well to our expectations if the regions represented inter-genic enhancer elements.  The closest annotated genes are, interestingly, \glspl{lnc}, and are found in a much higher frequency than expected in 76 randomly samples genes (\Cref{fig:mll_lnc}B,C). Though this result is suggestive, \glspl{lnc} are very challenging to correctly annotate, with efforts being confounded by both technical artifacts and methodological complications \cite[see Figure 1 for an overview of challenges associated with lncRNA annotation]{Cao2018}. There is, however, growing evidence that cancer cells, including leukemic blasts, may hijack the large and poorly understood lncRNA transcriptome to influence differentiation, energy metabolism, malignant proliferation, apoptosis, and the drug resistance of leukemia cells \cite[Table 1]{Gao2020}. It is possible, therefore, that the regions identified represent \glspl{cre} influencing the expression of functional lncRNAs involved in each individual patient's leukemia. However, none of the lncRNAs identified match with those in Table 1 of \textcite{Gao20202}, so their potential functions will remain the subject of further investigation.
+
+\begin{figure}
+    \centering
+    \includegraphics[width=\textwidth]{plot/ch5/mll_lnc.pdf}
+    \caption{MLL-AF4 regions compared to reference genes. A. Distance of the 76 reproducible patient regions to their nearest annotate TSS, minus the regions which are sitting in genic regions. B. Frequencies of gene categories in refSeq versus the sample of closest patient genes. C. Frequency of lncRNAs in 5000 random samples of 76 regions from refSeq, showing that the observed frequency of lncRNA is in the far tail of this distribution.}
+    \label{fig:mll_lnc}
+\end{figure}
+
+Histone proteins within nucleosomes may be post-translationally modified by the addition of several chemical groups which collectively serve to regulate transcription and the recruitment of transcription factors. The presence of specific histone modifications at a particular location of the genome can be determined experimentally using \gls{chip}, where peak regions give an estimate of the presence or absence of a particular modification. There are many histone modifications, and their combinatorial method of action makes it difficult to interpret the exact ramifications of their presence \cite{T2001}. Previously, a small number of important histone modifications and transcription factor binding sites were characterized in these samples (see Methods).  
+
+We called peaks on each of the ChIP-seq tracks using LanceOTron and intersected the peaks with the reproducible set of patient regions. We additionally drew 1000 random samples from the set of accessible regions used in this section, creating an empirical P-value, to understand the relative enrichment of these ChIP-seq signals versus the genomic background of accessible sequence. Within the available ChIP-seq data, regions are relatively enriched for H3K27ac, H3K4me1, and H3K4me3 (\Cref{table:mll_chip}). They are depleted in K379me2, and there is evidence that we see more binding of MLL to these regions than we would expect by chance, especially in patient 11911, where we additionally see increased binding of AF4, PAF1c, and RUNX1. The relative abundance of H3K27ac and H3k4me1 indicate that these elements may be acting as enhancers. However, it is not clear whether the high abundance of PAF1c, RUNX1, and MLL marks are due to general enrichment in enhancer regions or are somehow associated with these regions functionally. As patient 11911 is the only available sample with all of these chromatin marks and transcription factors available, we elect to study this patient specifically. We create a set of putative enhancer elements by selecting 18101 regions from the total 64162 accessible regions that overlap with both H3K27ac and H3K4me1 peaks. We then perform a similar analysis to before, selecting 5000 sets of 76 regions at random and observing the proportion of the putative enhancer elements that are additionally bound by MLL, AF4, PAF1c, and RUNX1. The resulting distributions show that none of the 5000 random samples are as highly enriched for MLL, PAF1c, or RUNX1 as the reproducible patient regions (\Cref{fig:mll_enhancer_overlap}). MLL binding is enriched by approximately 50\% over the mean of the distribution (67 versus 44.8), RUNX1 binding is 63\% higher than the mean (48 versus 29.3), and PAF1c is enriched by nearly 70\% (52 versus 30.6). We discuss the relevance of these transcription factors in the Discussion section. 
+
+\begin{figure}
+    \centering
+    \includegraphics[width=\textwidth]{plot/ch5/mll_enhancer_overlap.pdf}
+    \caption{Number of intersections between 76 randomly selected putative enhancer sites (accessible regions which overlapped with both H3K4me1 and H3K27ac chromatin peaks) in 5000 random samples compared to the observed quantities in the reproducible patient regions (plotted in red as a vertical line).}
+    \label{fig:mll_enhancer_overlap}
+\end{figure}
+
+\begin{figure}
+    \centering
+    \includegraphics[width=\textwidth]{plot/ch5/enhancer_cluster.pdf}
+    \caption{Coverage tracks for ChIP-seq marks, RNA-seq, and ATAC-seq for patient 11911 as well as PB cell for comparison. Five regions are in close promiximity to each other, each marked with H3K4me1, H3K27ac, MLL, and PAF1c. Regions of interest are highlighted in orange, with the highlight extending slightly beyond their borders for visual clarity.}
+    \label{fig:mll_enhancer_cluster}
+\end{figure}
+
+
+\begin{table}
+
+    \centering
+    \tiny
+    \begin{tabular}[t]{llllllllll}
+    \toprule
+    Patient ID & H3K27ac & H3K4me1 & H3K4me3 & H3K79me2 & MLL & AF4 & H3K27me3 & PAF1c & RUNX1\\
+    \midrule
+    26754 & 57 (0) & 60 (0) & 31 (0) & 2 (0.968) & 42 (0) & 4 (0.631) &   &   &  \\
+    11911 & 66 (0) & 72 (0) & 32 (0) & 2 (0.975) & 67 (0) & 13 (0.004) & 1 (0.933) & 52 (0) & 48 (0)\\
+    27800 & 60 (0) & 61 (0) & 38 (0) & 3 (0.956) &   &   &   &   &  \\
+    25911 & 23 (0) &   &   &   & 24 (0) &   &   &   &  \\
+    \bottomrule
+    \end{tabular}
+    \caption{ChIP-seq peak overlaps with reproducible patient regions, with the proportion of overlaps from 1000 random draws from all accessible regions in brackets. }
+    \label{table:mll_chip}
+    \end{table}
+
+
+\begin{table}[]
+    \tiny
+    \begin{tabularx}{\textwidth}{lllX}
+    \toprule
+    Region                                     & Function                   & Gene        & Cell line reference                                                             \\ \midrule
+    chr1:239881927-239883919                   & Promoter                   & CHRM3-AS2   &                                                                                 \\
+    \multirow{4}{*}{chr2:133023823-133025309}  & \multirow{4}{*}{Enhancer}  & AC098826.5; & GM19238;                                                                        \\
+                                               &                            & CDC27P1;    & GM19238,Pancreatic\_islet;                                                      \\
+                                               &                            & GPR39;      & Pancreatic\_islet;                                                              \\
+                                               &                            & LYPD1       & Pancreatic\_islet                                                               \\
+    \multirow{4}{*}{chr3:97628722-97630587}    & \multirow{4}{*}{Enhancer}  & ARL6;       & HT29;                                                                           \\
+                                               &                            & AC110491.1; & HT29;                                                                           \\
+                                               &                            & CRYBG3;     & HT29,PC3,th1,Thymus;                                                            \\
+                                               &                            & MINA        & HT29,Mesendoderm,NB4,PC3                                                        \\
+    \multirow{9}{*}{chr3:160554953-160556142}  & \multirow{9}{*}{Enhancer}  & IFT80;      & HT29;                                                                           \\
+                                               &                            & RP11;       & HT29,NB4;                                                                       \\
+                                               &                            & TRIM59;     & HT29;                                                                           \\
+                                               &                            & SCARNA7;    & HT29;                                                                           \\
+                                               &                            & ARL14;      & HT29;                                                                           \\
+                                               &                            & RP11;       & HT29,NB4;                                                                       \\
+                                               &                            & PPM1L;      & HT29,NB4;                                                                       \\
+                                               &                            & RP11;       & HT29,NB4;                                                                       \\
+                                               &                            & NMD3        & NB4                                                                             \\
+    \multirow{10}{*}{chr3:190303470-190305623} & \multirow{10}{*}{Enhancer} & IL1RAP;     & HFF,hMADS-3,HT29,Keratinocyte,MCF10A,\newline melanoma,Mesendoderm,NB4,PC3,T98G,ZR75-30; \\
+                                               &                            & GCNT1P3;    & hMADS-3,Keratinocyte,MCF10A,melanoma,NB4;                                       \\
+                                               &                            & 7SK;        & hMADS-3,Keratinocyte,MCF10A,melanoma,NB4;                                       \\
+                                               &                            & MTAPP2;     & HT29,Keratinocyte,Mesendoderm,T98G;                                             \\
+                                               &                            & CLDN1;      & HT29,Keratinocyte,MCF10A,PC3;                                                   \\
+                                               &                            & LEPREL1;    & Keratinocyte,MCF10A,Mesendoderm;                                                \\
+                                               &                            & CLDN16;     & Keratinocyte,NB4;                                                               \\
+                                               &                            & CCT6P4;     & Keratinocyte,NB4;                                                               \\
+                                               &                            & TMEM207;    & NB4;                                                                            \\
+                                               &                            & RP11        & NB4                                                                             \\
+    \multirow{8}{*}{chr4:54721244-54722456}    & \multirow{8}{*}{Enhancer}  & RP11;       & HFF,ZR75-30;                                                                    \\
+                                               &                            & LNX1;       & HFF;                                                                            \\
+                                               &                            & RP11;       & HFF,ZR75-30;                                                                    \\
+                                               &                            & CHIC2;      & HFF,ZR75-30;                                                                    \\
+                                               &                            & RP11;       & HFF,ZR75-30;                                                                    \\
+                                               &                            & PDGFRA;     & HFF;                                                                            \\
+                                               &                            & RPL21P44;   & ZR75-30;                                                                        \\
+                                               &                            & MORF4L2P1   & ZR75-30                                                                         \\
+    \multirow{3}{*}{chr4:177823634-177824977}  & \multirow{3}{*}{Enhancer}  & SPCS3;      & HFF;                                                                            \\
+                                               &                            & RP11;       & HFF,LHCN-M2,SK-N-SH\_RA;                                                        \\
+                                               &                            & NEIL3       & Keratinocyte,MCF10A                                                             \\
+    chr5:82663769-82665217                     & Enhancer                   & TMEM167A    & ZR75-30                                                                         \\
+    \multirow{3}{*}{chr5:119723091-119724865}  & \multirow{3}{*}{Enhancer}  & PRR16;      & HFF;                                                                            \\
+                                               &                            & CTD;        & HFF,LHCN-M2;                                                                    \\
+                                               &                            & RP11        & melanoma                                                                        \\
+    \multirow{2}{*}{chr6:141130170-141131796}  & \multirow{2}{*}{Enhancer}  & RP3;        & ME-1;                                                                           \\
+                                               &                            & RP11        & ME-1                                                                            \\
+    chr6:161161634-161163661                   & Enhancer                   & PLG         & GM12891,Namalwa                                                                 \\
+    chr7:11870320-11872428                     & Promoter                   & THSD7A      &                                                                                 \\
+    chr7:81474664-81476523                     & Enhancer                   & MIR1255B1   & NB4                                                                             \\
+    \multirow{3}{*}{chr8:77492793-77494807}    & \multirow{3}{*}{Enhancer}  & MRPL9P1;    & ESC\_neuron,SK-N-SH\_RA;                                                        \\
+                                               &                            & ZFHX4;      & ESC\_neuron;                                                                    \\
+                                               &                            & RP11        & ESC\_neuron,SK-N-SH\_RA                                                         \\
+    chr9:42018481-42020192                     & Promoter                   & \multicolumn{2}{l}{LOC102724238,LOC554249,KGFLP2}                                             \\
+    chr9:46686996-46688539                     & Promoter                   & \multicolumn{2}{l}{KGFLP1,LOC554249,LOC102724238}                                             \\
+    \multirow{8}{*}{chr10:33654161-33655412}   & \multirow{8}{*}{Enhancer}  & AK3P5;      & FT246,HFF,hMADS-3,HT29,LHCN-M2,ZR75-30;                                         \\
+                                               &                            & RP11;       & FT246,FT33,HFF,hMADS-3,HT29,Keratinocyte,LHCN-M2,ZR75-30;                       \\
+                                               &                            & RP11;       & FT246,FT33,HFF,hMADS-3,HT29,Keratinocyte,LHCN-M2,ZR75-30;                       \\
+                                               &                            & ITGB1;      & FT246,FT33,HFF,hMADS-3,HT29,Keratinocyte,LHCN-M2,ZR75-30;                       \\
+                                               &                            & RP11;       & FT246,FT33,HFF,hMADS-3,HT29,Keratinocyte,LHCN-M2,ZR75-30;                       \\
+                                               &                            & RP11;       & FT246,FT33,HFF,hMADS-3,HT29,Keratinocyte,LHCN-M2,ZR75-30;                       \\
+                                               &                            & NRP1;       & FT246,FT33,HFF,hMADS-3,LHCN-M2;                                                 \\
+                                               &                            & AL353600.1  & hMADS-3                                                                         \\
+    chr10:58119756-58122125                    & Promoter                   & ZWINT       &                                                                                 \\
+    chr12:24531253-24532422                    & Enhancer                   & BCAT1       & hMADS-3,Mesendoderm                                                             \\
+    \multirow{2}{*}{chr13:54602807-54604709}   & \multirow{2}{*}{Enhancer}  & LINC00458;  & Mesendoderm;                                                                    \\
+                                               &                            & RPL13AP25   & Mesendoderm                                                                     \\
+    chr13:84710151-84712348                    & Promoter                   & LINC00333   &                                                                                 \\
+    \multirow{5}{*}{chr13:103658908-103660657} & \multirow{5}{*}{Enhancer}  & TPP2;       & GM19238,GM19239,HFF,Namalwa;                                                    \\
+                                               &                            & KDELC1;     & GM19238,GM19239,HFF,Namalwa;                                                    \\
+                                               &                            & BIVM;       & GM19238,GM19239,HFF,Namalwa;                                                    \\
+                                               &                            & ERCC5;      & GM19238,GM19239,HFF,Namalwa;                                                    \\
+                                               &                            & TEX30       & HFF,Namalwa                                                                     \\
+    \multirow{2}{*}{chr14:38593423-38595439}   & \multirow{2}{*}{Enhancer}  & CTD;        & Mesendoderm;                                                                    \\
+                                               &                            & SSTR1       & Mesendoderm                                                                     \\ \cmidrule(l){1-4} 
+    \end{tabularx}
+    \caption{EnhancerAtlas 2.0 results for the 76 reproducibly identified patient regions.}
+    \label{table:mll_enhancer}
+    \end{table}
+
+
+
+% discuss this in the discussion, don't interperet it here.
+We searched EnhancerAtlas 2.0 (Citation) for regions matching ours, and found that 17 out of the 76 regions were known enhancers, and 6 were known promoters (\Cref{table:mll_enhancer}). The functionality validated active cell types varied considerably, from enhancers for GPR39 and LYPD1 in pancreatic islet cells to more similar TMEM207 and RP11 enhancers in pro-myelotic leukemia cell line NB4. In this list as well, non-coding RNA targets are also over-represented. RP11, for example, was identified as functionally validated target of 10 of the 17 enhancers. Though RP11 represents a class of otherwise unannotated genes, rather than a protein of its own, many subtypes of RP11 are in fact non-coding RNAs (CITATION). As previously mentioned, these regions are clearly marked as putative enhancer regions, though it is not immediately obvious which genes they may be regulating. Interestingly, some regions co-occur in clusters such as the one on Chromosome 13 in \Cref{fig:mll_enhancer_cluster}. Here, five regions are found together, each marked with enhancer marks H3K4me1 and H3K27ac as well as the transcription factors MLL and PAF1c. The second of these five regions is annotated as an enhancer for TPP2, KDELC1, BIVM, ERCC5, and TEX30 in GM EBV-immortalized cells as well as a fibroblast cell line HFF-1. Whether the remainder of the enhancers are novel in the MLL-AF4 patients remains to be shown experimentally, however there is no clear accessibility in these regions for \glspl{bcp}. Interestingly, these regions are all most accessible in patients compared to any other cell type in the ENCODE blood cell type collection, suggesting that their function may be new in these patient samples (\Cref{fig:encode_pt_regions}). 
+
+\begin{figure}
+    \centering
+    \includegraphics[width=\textwidth]{plot/ch5/pt_compared_to_encode.pdf}
+    \caption{Log RPKM for five regions in a putative enhancer cluster identified through topic modelling in ENCODE blood cells versus patients and MLL-AF4 cell types.}
+    \label{fig:encode_pt_regions}
+\end{figure}
+
+
+% For tomorrow
+
+- 55 of the regions from the patient topic are also found in the encode when you take out anything active in other cell types.
+- are these also the ones actually marked by things and therefore active? 
+
+- Correspondance between the RS411 and SEM topics just in a summary way
+- Use the ENCODE as basically a replication
 
 %\begin{figure}
 %    \centering
-%    \includegraphics[width=\textwidth]{plot/ch5/mll_coenriched.pdf}
-%    \caption{Degree of shared topic activity between cell types. Plotted are the number of instances where a topic is active at the facetted level in both of the indicated cell types. Results are tabulated across all $k=5, \ldots, 12$ inference runs.}
-%    \label{fig:mll_shared_topics}
+%    \includegraphics[width=\textwidth]{plot/ch5/mll_encode_nt15 _annotated.pdf}
 %\end{figure}
-
-%Due to the high degree of topic coenrichment within the \glspl{bcp}, inference with the higher values of $k$ tends to spuriously split topic loadings. This is evident in both the OHE and BLDA cases, where the average topic loadings are very low for higher values of $k$. Additonally, RS4;11 is almost always annotated as having at least highly specific topic loading (topic 3 in $k=5, 6$, topic 4 in $k=8$). The utility of forcing a high number of topics on this system is, therefore, questionable.
-
-%For these reasons, we initially focus our examination on the smallest number of topics (\Cref{fig:mll_k_5}). Many of the previously mentioned trends are even more evident in this small system.
