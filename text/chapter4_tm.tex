@@ -5,7 +5,7 @@
 %  \qauthor{--- Cicero's \textit{de Finibus Bonorum et Malorum}}
 %\end{savequote}
 
-\chapter{Identifying co-accessible regulatory regions using topic modelling}
+\chapter{Identifying co-accessible regulatory regions using topic modelling} \label{ch4}
 %\chapter{Regulatory Program Topic Modelling for ATAC-seq}
 %\chapter{Latent Dirichlet Allocation for the Unsupervised Discrimination of ATAC-seq Experiments}
 %\chapter{Machine learning, or something like that...}
@@ -110,7 +110,7 @@ A public implementation of the LanceOTron can be found at \url{https://github.co
 
 \subsection{Running LDA with cisTopic} \label{ch4:method_cistopic}
 
-We use the implementation of \gls{lda} in cisTopic \cite{BravoGonzalez-Blas2019}. cisTopic is intended for use on single cell ATAC-seq experiments, however the input format is amenable to any quantative data observed on a cell by region basis. To construct the input data to cisTopic, we construct a bespoke pipeline that firstly calls peaks from ATAC-seq experiments, and secondly harmoises these peaks while constructing a count matrix. A count matrix is a sparse matrix where the rows are cells, or in the case of this thesis, cell types, and the columns are regions.
+We use the implementation of \gls{lda} in cisTopic \cite{BravoGonzalez-Blas2019}. cisTopic is intended for use on single cell ATAC-seq experiments, however the input format is amenable to any quantitative data observed on a cell by region basis. To construct the input data to cisTopic, we construct a bespoke pipeline that firstly calls peaks from ATAC-seq experiments, and secondly harmoises these peaks while constructing a count matrix. A count matrix is a sparse matrix where the rows are cells, or in the case of this thesis, cell types, and the columns are regions.
 
 
 
@@ -118,7 +118,7 @@ We use the implementation of \gls{lda} in cisTopic \cite{BravoGonzalez-Blas2019}
 
 \gls{lda} requires a set of three hyper-parameters to be supplied, alpha, beta, and the number of topics. This chapter investigates applications of LDA to problems of several scales, so the choice of hyper-parameters is not easily chosen, at least in an unbiased way. We approach this issue by using a Bayesian Optimization approach to learn the best set of hyper parameters for a given set of ATAC-seq experiments. We wrote a typical cisTopic analysis in python via rpy2 ({\tt https://rpy2.github.io/doc/latest/html/index.html}) and used the BayesianOptimization library ({\tt https://github.com/fmfn/BayesianOptimization}) to optimize a target function for a given set of hyper-parameters. This task was facilitated by the use of Dask to compute several hundred possible combinations simultaneously \cite{Rocklin2015}. The target function to optimise is based on the specific application, as discussed in \autoref{ch4:results} section.
 
-\subsection{Bulk LDA (BLDA) Method}
+\subsection{Bulk LDA (BLDA) Method} \label{ch4:method_blda}
 
 The BLDA method is a small extension to cisTopic which aims to incorporate a proxy of how accessible each peak region is in a particular experiment. This makes it in some ways more similar to the traditional approach to LDA within natural language processing, which gives an integer value for the number of times a particular word appears in a text. To create the RPKM normalized count matrix and run the inference, we use functions from the blda python package available on Github at \url{https://github.com/Chris1221/blda}. \todo{Link the snakemake pipeline minus the data.} The construction of the count matrix requires linked coverage files and their associated peak calls. The pipeline is agnostic to the type of coverage file (either BAM files or RPKM normalised bigWig tracks can be provided) and peak calls can be made by any software which outputs delineated, non-overlapping genomic regions. Hyper-parameter optimization is conducted according to \Cref{ch4:hyper} and a modified version of cisTopic is run using {\tt rpy2}. The modification to cisTopic, found at \url{https://github.com/Chris1221/cisTopic}, relaxes a constraint to provide the {\tt lda} package's collapsed Gibb's sampler with a binary sparse matrix. Several other functions from the cisTopic function are applicable directly to the situation of bulk LDA after the data has been altered. 
 

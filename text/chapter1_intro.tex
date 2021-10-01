@@ -103,55 +103,100 @@
     %   4: mll: 25
     %   5. condlusion : 10
 
-\chapter{\label{ch:1-intro} Next Generation Sequencing} 
 
-\minitoc
+% Introduction Outline: 
 
-
-Introduction Outline: 
-
-\begin{itemize}
-    \item Genomic Sequencing Data
+% \begin{itemize}
+%     \item Genomic Sequencing Data
         
-    \begin{enumerate}
-        \item Enabling advances in Sequencing technologies
-        \item Applications of sequencing technologies
-        \begin{enumerate}
-            \item Population variation (whole genome sequencing)
-            \begin{enumerate}
-                \item Technical error and variant calling
-                % I dont deal with this but its an important caveat
-                \item Issues with assembly in diverse populations
-            \end{enumerate}
-            \item Functional genomics (ATAC-seq, DNAse-seq, ChIP-seq, etc.)
-            \begin{enumerate}
-                \item 
-            \end{enumerate}
-        \end{enumerate}
+%     \begin{enumerate}
+%         \item Enabling advances in Sequencing technologies
+%         \item Applications of sequencing technologies
+%         \begin{enumerate}
+%             \item Whole genome sequencing enables us to study population variation across the globe.  (whole genome sequencing)
+%             \begin{enumerate}
+%                 \item Technical error and variant calling
+%                 % I dont deal with this but its an important caveat
+%                 \item Issues with assembly in diverse populations
+%             \end{enumerate}
+%             \item Functional genomics (ATAC-seq, DNAse-seq, ChIP-seq, etc.)
+%             \begin{enumerate}
+%                 \item 
+%             \end{enumerate}
+%         \end{enumerate}
 
-    \end{enumerate}
+%     \end{enumerate}
 
-    \item Machine Learning and Statistical Inference for sequencing data
-    \begin{enumerate}
-        \item Reasons for considering machine learning for these two problems.
-    \end{enumerate} 
+%     \item Machine Learning and Statistical Inference for sequencing data
+%     \begin{enumerate}
+%         \item Reasons for considering machine learning for these two problems.
+%     \end{enumerate} 
      
-    \item \textbf{Aim}: Use sequencing data and machine learning to find new ways to answer outstanding issues at the population and cellular scale.
-    \begin{enumerate}
-        \item \textbf{Specific Aim 1}: Estimate a coloured ancestral recombination graph from WGS Data
-        \begin{enumerate}
-            \item Modelling ancestry with the coalescent
-            \item Traditional approaches to modelling demography
-            \item Sequential Monte Carlo
-            \item Advantages, including directional migration
-        \end{enumerate}
-        \item \textbf{Specific Aim 2}: Predict Regulatory Regions of MLL-AF4 Leukemia from ATAC-seq
-        \begin{enumerate}
-            \item Traditional methods for genomic sequence annotation
-            \item Artificial Neural Networks
-            \item Adopting artificial intelligence models for sequence based learning
-            \item Advantages , including in silico mutagenesis 
-        \end{enumerate}
-    \end{enumerate}
-\end{itemize}
+%     \item \textbf{Aim}: Use sequencing data and machine learning to find new ways to answer outstanding issues at the population and cellular scale.
+%     \begin{enumerate}
+%         \item \textbf{Specific Aim 1}: Estimate a coloured ancestral recombination graph from WGS Data
+%         \begin{enumerate}
+%             \item Modelling ancestry with the coalescent
+%             \item Traditional approaches to modelling demography
+%             \item Sequential Monte Carlo
+%             \item Advantages, including directional migration
+%         \end{enumerate}
+%         \item \textbf{Specific Aim 2}: Predict Regulatory Regions of MLL-AF4 Leukemia from ATAC-seq
+%         \begin{enumerate}
+%             \item Traditional methods for genomic sequence annotation
+%             \item Artificial Neural Networks
+%             \item Adopting artificial intelligence models for sequence based learning
+%             \item Advantages , including in silico mutagenesis 
+%         \end{enumerate}
+%     \end{enumerate}
+% \end{itemize}
 
+\chapter{\label{ch:1-intro} Machine Learning and Next Generation Sequencing} 
+
+%\minitoc
+
+In recent years, genomics has taken front and centre stage in the search for knowledge about our physiology and our humanity. Much of this growth from the time of Mendel's peas to the current era of rapid development and global vaccination against deadly disease with messenger RNAs has come at the heels of technological developments in sequencing technologies. As we continue to explore the questions raised by the first efforts to understand what it is that makes up humanity at a molecular level, the availability of massively high-throughput sequencing has allowed for the study of our species, from its history to its pathology. Cost lowers every year, and with it, so too does the barrier to entry into genomics research. This explosion in sequencing data, concurrent with a famously exponential increase in computational processing power, has changed the way that we conduct research and philosophically approach hypothesis testing. Alogirthms designed to learn patterns directly from petabytes of freely available data prioritize biological hypotheses. This thesis broadly aims to extend the use of machine learning for next generation sequencing data in two different ways. Firstly, by learning demographic parameters from whole genome sequencing data, and secondly by learning cellular regulatory programs from collections of accessible chromatin experiments. We apply the first method to detect a substantial back migration in the ancient past, and the second to identify a subset of novel enhancer elements active in childhood KMT2A-AFF1 leukemia patients. These methods both address open questions in the field, and provide novel insight into human origins and the dysregulation of functional genomics leading to cancer.
+
+This chapter is structured as follows. I begin by introducing next generation sequencing and its development. Next, I give context to the long-standing problem of demographic inference and how the NGS revolution has set the stage for the use of large-scale machine learning algorithms. I also briefly describe the mathematical model underpinning these methods and other comparable approaches. We then pivot to discussing the application of next generation sequencing to functional genomics and the development of \gls{atac}, \gls{chip}, and RNA sequencing. I describe previous approaches for learning from these data applied to childhood leukemias and more broadly. 
+
+Chapter 2 introduces \gls{smc2} and applies it to the problem of detecting ancient migration into Africa.  Chapter 3 develops the \gls{blda} algorithm and demonstrates its use on simulated and real data. Chapter 4 applies BLDA to an unknown dataset of KMT2A-AFF1 patients and cell lines in an attempt to study active regulatory programs in these samples. Chapter 5 discusses the overall implications of and next steps with this research.
+
+\section{The Evolution of Next Generation Sequencing}
+
+The order of bases in poly-nucleotide chains simultaneously encode the instructions for protein synthesis and all information about the geneological history of an individual. Despite an understanding of the three-dimensional structure of \gls{dna} in the early 1950s, the first protein-coding gene sequence was not completed until 1972 \cite{JD1953,JOU1972}. By this point, a sequencing method developed by Fred Sanger and colleagues was giving rise to the first generation of sequencing technologies \cite{Kulkarni2014}. Sanger sequencing, and its more modern incarnation Sanger sequencing by capiliary electrophoresis, remains an important technique for clinical genomics and is the gold standard for accuracy \cite{Shendure2017}. This thesis is concerned with the analysis of data resulting from sequencing technologies, and not the mechanism of sequencing itself, so descriptions here will be brief. Sanger sequencing combines denatured single-stranded DNA molecules and a solution of nucleotides with small amounts of chain-terminating dideoxynucleotides to produce fragments of varying lengths, which can then be separated by molecular weight through electrophoresis and read either manually from a slab gel or automatically through a capillary \cite{F1977,Liu2012}. Modern iterations are capable of processing up to X samples concurrently, improving substantially over previous iterations of the technique which required manual base calling (Cite Illumina). 
+
+In many ways, modern NGS techniques are natural extensions of the original Sanger sequencing method. The first step in an NGS workflow is library preparation \cite{Head2018}. This step involves gathering DNA or \gls{rna} from the experimental design being employed, such as \gls{wgs}, fragmenting the product to a desired length and attaching oligonucleotide adaptors to both the 3' and 5' ends of the sequence. Adaptors are attached either through ligation, where adaptors are ligated to end-repaired inserts, or by "tagmentation" where a single transposase enzyme fragments and ligates adaptors in a single step \cite{R2011}. 
+
+There are currently four distinct methods of sequencing, in approximate order of popularity and expected read coverage:
+
+\begin{enumerate}
+    \item Sequencing by synthesis
+    \item Sequencing by ligation
+    \item Ion semiconductor sequencing
+    \item Pyrosequencing
+\end{enumerate}
+
+% As a downside, mention that the error rates per base are much higher than with sanger sequencing \cite{Liu2012}
+% Talk about long read versus short read, and arrays versus sequencing.
+
+% dideoxynucleotides (remove 3' hydroxy group atom) stop extension, chain terminating nucleotide is identified with a fluorescent dye at the 3' end. Extension products are seperated by capiliary electrophoresis or on a slab gel traditioanlly , where an electrical field moves the DNA with a speed inversely proportional to its molecular weight. Excited terminal bases emits light which can be recorded. Remains gold standard with extremely high accuracy. Sequencing single genes, microsatellite or STR, hard to sequence regions. 
+
+% NGS transformed this. Massively parrellel versus one forward and reverse read.  Interogating > 100 genes, low input amounts, novel variants, 
+
+% - library obtained either by amplification or by ligation 
+
+% - Four main methods used by NGS systems
+%     - Pyrosequencing
+%         - Each nucleotide incorporation releases a pyrophosphate, used in a series of reactions resulting in light which is recorded by a camera. 
+%         - Comparable read lengths to sanger, but high error rates over homopolymers.
+%     - sequencing by synthesis (most popular, Illumina HiSeq)
+%         - illumina
+%         - All 4 nucelotides are added and terminated, one binds, the base is read by fluorsence, then the attached termination and fluorsence is washed away and the process is repeated. 
+%         - increased read lengths as you get longer due to incomplete deletion of the fluorsence
+%     - squencing by ligation
+%         - 16 oligo nucleotide probabilities
+%         - adaptor is bound, and the 2 specific bases of the oligose are bound with the fluorecent probe. The probe and last 3 bases are washed away and the sequence is repeated for 5 adaptor sequences offset by one base
+%         - very short reads
+%     - ion semiconductor sequencing 
+%         - semiconductor transistor can detect phases
+%         - a single H+ is released on base incoroporation. base calling is a NN, like gerton's previous work 

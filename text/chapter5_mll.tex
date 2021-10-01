@@ -1,66 +1,110 @@
-%\begin{savequote}[8cm]
-%\textlatin{Neque porro quisquam est qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit...}
+\begin{savequote}[8cm]
+    Once you've got a task to do, it's better to do it than live with the fear of it.
+  \qauthor{--- Joe Abercrombie, \textit{The Blade Itself}}
+\end{savequote}
 
-%There is no one who loves pain itself, who seeks after it and wants to have it, simply because it is pain...
-%  \qauthor{--- Cicero's \textit{de Finibus Bonorum et Malorum}}
-%\end{savequote}
-
-\chapter{BLDA prioritizes accessible regulatory regions in MLL-AF4 driven leukemia} \label{ch4}
+\chapter{Topic modelling identifies novel PAF1c-bound enhancer elements in KMT2A-AFF1 leukemia patients}
+\chaptermark{Topic modelling in fetal KMT2A-AFF1 Leukemia}
+%\chapter{BLDA prioritizes accessible regulatory regions in MLL-AF4 driven leukemia} \label{ch4}
 
 \minitoc
 
 
-
-% remember to put the process of making the MLL specific blacklist on the 
-
-
-
-% motifs
-% n=5   
-% topic 3 
-    % NFYC diffexp in apl https://genomebiology.biomedcentral.com/articles/10.1186/gb-2008-9-2-r38
-%   % AHR crucial for leukemia stem cell maintenance https://cancerres.aacrjournals.org/content/79/22/5799
-%   % CUX1 involved in myeloid leukemias https://ashpublications.org/blood/article/121/6/975/31447/CUX1-is-a-haploinsufficient-tumor-suppressor-gene 
-%   % ZFX https://pubmed.ncbi.nlm.nih.gov/24485662/
-% 
-% NEUROG2 is also enriched, the only one not associated with leukemia of some sort. 
-% shown to create distinct chromatin accessibility landscapes in very distinct neuron subpopulations https://www.ncbi.nlm.nih.gov/pmc/articles/PMC6556771/
-
-% topic 1
-%   CREB1 is a "suspected leukemia ocoprotein" https://pubmed.ncbi.nlm.nih.gov/23000483/
-%           also CREM found
-%      bind cAMP response elements (cAMP-response element)
-%       important for normal hematopoiesis https://www.ncbi.nlm.nih.gov/pmc/articles/PMC2214769/
-%        Overly expressed both in the boen marrow and blast cells of acute leukemia patients
-%   MAX is differentially expressed in human myloid leukemias https://pubmed.ncbi.nlm.nih.gov/7500645/
-
-%  topic 2
-%   LIN54 is a cell cycle gene which makes sense given its enrichement in normal pre b cells https://www.nature.com/articles/ncomms12301
-
-
-% 30% of cells in the RS4;11 paper resembled myeloid cells cytochemically. 
-%       they were from a relapsed patient https://pubmed.ncbi.nlm.nih.gov/3917311/#:~:text=A%20cell%20line%2C%20designated%20RS4,7.
-%       morphologically, they were all lymphoid in appearance
-
-% SEM cells also from a 5 year old in relapse 
-%   Lymphoid cells but also had some myeloid antigens like CD13, CD15, and CD33 https://onlinelibrary.wiley.com/doi/pdf/10.1111/j.1365-2141.1994.tb04726.x?casa_token=wybBr2k2O-QAAAAA:M5peYc4iAuyTaA7HhoEKQd-IgOQ15B6dm9_EPi-Od1UZpl5aKSTUxYT2B8IXkgYkPlaq5QfJpmLDJqk
-
-
 \section{Introduction} \label{ch5:intro}
 
-\section{Methods} \label{ch5:methods}
+% General statement of intent.
+The \gls{mll} gene, previously known as MLL or MLL1, is a crucial epigenetic regulator required for definitive hematopoiesis \cite{Ernst2004a}. It is also frequently involved in chromosomal translocations causing a treatment resistant leukemia with especially poor prognosis \cite{Krivtsov2007}. Though outcomes for acute leukemias in children has improved vastly, the five year event-free survival rate for infant leukemias remains less than 50\% despite extensive treatment efforts and supportive care \cite{Rice2020}. Recent work has demonstrated the important roles of chromatin remodelling in KMT2A-recombinant (KMT2Ar) leukemiagenesis, though the specifics of the differentially accessible regulatory programs active in infant KMT2Ar remains unknown \cite{Erfurth2003}. In this chapter, I propose the use of the previously developed topic modelling approach BLDA to identify accessible regulatory programs in KMT2A-AFF1 leukemia patients.  
+
+KMT2A is expressed ubiquitously throughout haematopoiesis, playing an crucial role in maintaining normal numbers of progenitor cells and ensuring the availability of adult \glspl{hsc} \cite{Meyer2017, Antunes2020, Ernst2004} . Its deletion is embryonically lethal in mice, illuminating its role in stage specific control of gene expression. Much of the original work of characterizing its function as a transcriptional regulator came from model systems due to a close homology to Trithroax in \textit{Drosophila} and similar activity to SET1 (aka COMPASS) in yeast \cite{Popovic2005}. Similar to the yeast analog SET1, a C-terminal SET domain confers histone H3K4 methyltransferase activity while the N-terminal is responsible for binding with three AT-hook motifs and four PHD fingers \cite{JJ2003, Hsieh2003}. While functional, KMT2A is responsible for region specific methylation deposition responsible for a diverse set of functions including marking enhancer elements and promoting transcription initiation \cite{Wang2009}. In KMT2Ar driven leukemias, the cleaved N terminus instead associates with one of up to ninety C-terminal proteins, conferring a huge range of functional activities and interupting its normal function as a methyltransferase \cite{Hsieh2003}. The fusion (KMT2A-FP) is able to recruit new cofactors such as DOT1L, whose abberant methylation profile at H3K79 sites is highly discriminatory for genes activated by the fusion protein and believed to be crucial for the transforming activity of KMT2A-FPs \cite{YOkada2005, KMBernt2011}. Incidentally, clinically targeting DOT1L is generally not sufficient to have any effect on many KMT2Ar cell lines, though some early evidence suggests that targetting DOT1L alongside other key cofactors like menin may show more success \cite{Dafflon2016}. This demonstrates the resiliency and redundancy in KMT2A-FP driven leukemias, and the need to understand the full complement of epigenomic changes involved in leukemia maintenance.  
+
+Much like its analog COMPASS, KMT2A has an intimate relationship with chromatin remodelling factors such as INI1 and SNF5 \cite{Cenik2021, Sugeedha2021}. This family of epigenetic modifiers termed SWI/SNF (historically called SWItch/Sucrose non-fermentable due to its involvement in yeast sucrose fermentation pathways) was first characterized in yeast, and is involved in ATP-dependant nucleosome mobilization during transcription and the cell cycle \cite{C2015}. In humans, mutations within SWI/SNF chromatin remodelling complexes are incredibly common in cancer; as an example, 57\% of ovarian clear cell carcinomas contained inactivating mutations along the length of a BAF complex subunit ARID1A (ref 45). Similarly, inactivation of INI1 causes a rare and extremely aggressive childhood cancer called malignant rhabdoid tumours (MRTs), nominating INI1 as a recessive tumor suppressor and raising key questions about its dysregulation in KMT2Ar cancers due to direct protein-protein interactions \cite{I1998}. See \cite{C2015} for a comprehensive review of the roles of the human SWI/SNF complex in malignancies. 
+
+% Alongside COMPASS, this family of proteins competes with PgC proteins to activate important genes such as HOXA9 during development, and human analogs  
+
+% Paragraph about the disease itself. 
+Translocations involving KMT2A are a negative pronostic factor when the leukemia presents as \gls{all}, but not as \gls{aml} in infants \cite{Meyer2014}. The former, however, accounts for upwards of 80\% of leukemias involving KMT2Ar \cite{Rice2020}. The reasons for this difference in prognosis are not well understood, especially as cancers with this etiology are especially plastic with regards to their presentation. Leukemias initially presenting as \gls{all} often present as \glspl{aml} upon relapse (which is a frequent occurance among KNT2Ar leukemias).  however the underlying chromatin landscape of the cancer cells in this case is able to produce gene expression programs resembling either of the two diseases, or a phenotypically intermediate form known as mixed lineage leukemia (MLL). Though KMT2A has well described direct interactions with many different proteins including cell cycle regulators like E2F and HCF, Cyp33, HDAC complexes, histone acetylases (CBP and P300) and the previously mentioned chromatin remodelling factors INI1 and SNF5, the degree to which the fusion proteins influence the transcriptome is only just beginning to be illuminated \cite{Sugeedha2021}. Its affinity for binding to specific regions of the genome is not entirely determined by the actual sequence but also partially the structure of the DNA, with early results indicating binding affinity for cruciform DNAs with no clear sequence homology \cite{NJ1994}. Much recent research points to disturbances in the epigenetic regulation of gene expression as a potential mechanism for leukemiagenesis \cite{Krivtsov2007}.
+
+In this chapter, I concentrate on the most frequent fusion partner of KMT2A, AFF1 or AF4 as it was previously known \cite{Meyer2017}. Many fusion partners of KMT2A belong to a network of transcriptional regulators involved in chromatin remodeling, including AF4, and the disruption of this network may be important for leuekmiagenesis \cite{Erfurth2003}. In fact, recent evidence has suggested that the KMT2A-AFF1 fusion protein is involved in a complex feed-forward gene regulatory network (GRN) involving many well-known proteins such as RUNX1 and CASP9 as well as some which have no previously-described function \cite{Harman2021, Wilkinson2013}. Outside of well-characterised direct binding events where KMT2A-AFF1 is able to regulate the expression of key genes such as proto-oncogene MyC and BCL2, its regulation of and interactions with downstream gene targets is almost completely unknown. This is especially true in the case of infant leukemias with dismal prognosis, where a unique fetal-specific gene expression profile may contribute to the otherwise unexplained age-related differences in prognosis \cite{Rice2020a}. Fetal lymphopoiesis remains poorly defined, however clearly defining the expression and accessibility profiles as they differ from adult progenitor cells is key to understanding leukemiagenesis. Recently, two CD19$^+$ B-cell progenitors were identified in fetal populations, a CD10$^+$ ProB (PB) cell type resembling adult progenitors and a completely novel Pre-ProB (PPB) CD10$^-$ celltype almost undetectable in adult bone marrow \cite{OByrne2019}. Additionally, their transcriptomic profile is dissimilar from the small numbers of PPB cells able to isolated in adults, and share expression signatures with CD10$^-$ infant \gls{all} blast cells \cite{OByrne2019}. These cells therefore represent the earliest identified fetal-restricted committed lymphoid progenitor, suggesting that they may provide a permissive environment for leukemia origination.  
+
+This chapter aims to use topic modelling to describe regulatory programs within four childhood leukemia patients, contrasting them against two closely related healthy fetal cell types, PB, and PPB. We also compare these samples against two cellular models of KMT2A-AFF1, RS411 and SEM, both derived from childhood leukemias. I use the previously developed BLDA method to identify key-word regions discriminative of the different groupings of samples, and study their epigenomic properties. This amounts to an investigation into the accessible regulatory regions and pathways active in in this uniquely difficult to treat form of leukemia. 
+
+% Some leukemias are maintained by populations of self-renewing \glspl{lsc}, possibly originating from early stage \glspl{hsc}. However, one binding partner for KMT2A, ENL, has shown to be able to create populations of LSCs from later stage, lineage committed myeloid progenitor cells. This  
+
+
+% Beyond menin, KMT2A has been shown to interact with 
+
+
+
+% About MLL
+% - Found in upwards of 70\% of infant leukemias (AML + ALL)
+% - Decreased in older children. Also found in treatment induced leukemias. 10\% overall leukemias. 
+% - MLL-r ALL + leukemias after topoisomerase II inhibitors have bad outomes. Weirdly, AML with MLL-r has same prognosis. d
+% - Some leukemias are maintained by populations of self-renewing LSCs, HSCs could be the cell of origin for chronic and acute myeloid leukaemias. This is because they are long lived and capable of proliferation. 
+%     - Reya, T., Morrison, S. J., Clarke, M. F. & Weissman, I. L. Stem cells, cancer, and cancer stem cells. Nature 414, 105–111 (2001).
+% - However, some experiments show that committedd myeloid cells can be transformed to LSCs if they express MLL-ENL (though it required a larger number)
+
+% - MLL is ubiquitously expressed throughout hematopoiesis. SET domain that is responsible for methylation of H3K4 similar to SET1 in yeast. AF4 is also known as AFF1
+
+
+
+% - HoxA9 is important. Menin is required to supress MLL from messing up HOXA9 expression, important for transformation 
+%     - Yokoyama, A. et al. The menin tumor suppressor protein is an essential oncogenic cofactor for MLL-associated leukemogenesis. Cell 123, 207–218 (2005).
+% - Positively influenced gene expression for some things like HOX genes
+% - HOX genes expression is initiated properly but not maintaind will MLL fusions 
+%     - Yu, B. D., Hess, J. L., Horning, S. E., Brown, G. A. & Korsmeyer, S. J. Altered Hox expression and segmental identity in Mll-mutant mice. Nature 378, 505–508 (1995).
+
+% - Disturbance in the epigenetic regulation of gene expression as a potential mechanism for human leukaemogenesis. 
+% - AF4 is the most common and the one that we will concentrating our study on
+% - AF4 has C terminal transriptional activation.
+% - Many MLL fusion partners belong to a network involved in transcriptional regulation through chromatin remodelling 
+%     - Erfurth, F., Hemenway, C. S., de Erkenez, A. C. & Domer, P. H. MLL fusion partners AF4 and AF9 interact at subnuclear foci. Leukemia 18, 92–102 (2004).
+% - E.x. AF10 associated with DOT1L, DOT1L is important for MLL-AF10 activity. If DOT1L was inactivated, either through small interfering RNAs or by using a catalytically ianctive mutant, MLL-AF10 was unable to transform haematopoietic progenitors into leukemia stem cells
+%     - Okada, Y. et al. hDOT1L links histone methylation to leukemogenesis. Cell 121, 167–178 (2005). Identifies a unique function of an MLL fusion (MLL–AF10). The recruitment of the H3K79 methyltransferase DOT1L by AF10 is necessary for transformation.
+% - MLL-ENL, H3K79me increased on HOXA9 and MEIS1 promoters 
+%     - Milne, T. A., Martin, M. E., Brock, H. W., Slany, R. K. & Hess, J. L. Leukemogenic MLL fusion proteins bind across a broad region of the Hox a9 locus, promoting transcription and multiple histone modifications. Cancer Res. 65, 11367–11374 (2005).
+
+
+% - Not reaaaaaaly sequence specific 
+%     - Zeleznik-Le, N. J., Harden, A. M. & Rowley, J. D. 11q23 translocations split the “AT-hook” cruciform DNA-binding region and the transcriptional repression domain from the activation domain of the mixed-lineage leukemia (MLL) gene. Proc. Natl Acad. Sci. USA 91, 10610–10614 (1994).
+% - Of all the binding partners, AF4 (t(4;11)(q21;q23)) is the most common, AF4 belongs to an expanding family of serine / proline rich nuclear proteins. 
+%     - Meyer C, Hofmann J, Burmeister T, Gröger D, Park TS, Emerenciano M, Pombo de Oliveira M,
+%     Renneville A, Villarese P, Macintyre E, et al. 2013. The MLL recombinome of acute leukemias
+%     in 2013. Leukemia 27: 2165–2176. 
+% - KMT2A-FP is able to drive leukemogenesis alone through aberrant gene expression profiles. 
+% - KMT2A-AFF1 most often resembles ALL, but can also look like either AML or a mixed phenotype leukemia. They can also relapse to become AMLs derived from a clone of the original leukemia. This indicates a core network of genes differentially regulated in KMT2A-AFF1 leukemia that can drive both AML and ALL.
+% - Though key genes are important, a lot of key regulation is caused by entire networks of genes 
+%     - Reik W. 2007. Stability and flexibility of epigenetic gene regulation in mammalian development.
+%     Nature 447: 425–432. 
+% - Though it is worth mentioning that some genes are just disease induced, and not all differentially expressed genes are actually involved in the disease
+%     - https://www.nature.com/articles/s41467-021-25805-y
+% - Direct binding is implicated in key genes like BCL2 and proto-oncogene MYC as well as RUNX1 
+%     - Guenther MG, Lawton LN, Rozovskaia T, Frampton GM, Levine SS, Volkert TL, Croce CM, Nakamura
+%     T, Canaani E, Young RA. 2008. Aberrant chromatin at genes encoding stem cell regulators in
+%     human mixed-lineage leukemia. Genes Dev 22: 3403–3408. 
+%         - This one looks important regardless 
+% - Direct binding events show grossly different profiles of chromatin structure, histone modifications very different. 
+
+% - Direct binding is not all that is important. GRN showed that RUNX1 is very important. Also represesses CASP9. 
+%     - Joe's paper
+% - Very few cooperating mutations
+%     -Bardini M, Galbiati M, Lettieri A, Bungaro S, Gorletta TA, Biondi A, Cazzaniga G. 2011.
+%     Implementation of array based whole-genome high-resolution technologies confirms the
+%     absence of secondary copy-number alterations in MLL-AF4-positive infant ALL patients.
+%     Leukemia 25: 175–178.  
+
+
 
 \section{Results} \label{ch5:results}
 
-\subsection{MLL-AF4 in the context of other blood cells}
-
-\subsubsection{Identifying MLL-AF4 specific accessibility patterns}
 
 
+\subsection{Data Processing and Peak Calling}
 
-Within the context of the entire ENCODE dataset, the MLL-AF4 cells were indistinguishable from the closely related B cell precursors. In order to identify differences between them, the model would need a very large number of topics, sufficient to explain all of the detailed similarities between the diverse set of celltypes represented in the dataset. This is computationally difficult, and risks over-parameterizing the data. A reasonable alternative is a detailed examination of these cells in isolation, and a comparison to the results generated in the larger model. In this section, I create a topic model with just the cells of interest and attempt to differentiate them based on patterns in accessible chromatin using BLDA.
+We perform \gls{atac} on four childhood leukemia patient samples from the \gls{ukbb} as well as two cellular models of KMT2A-AFF1 leukemia, RS411 and SEM. Details of the processing of these samples and the maintenance of cell lines is available in the Methods section. We collect three Pre-ProB (PPB) and three ProB samples from previous work and download coverage data from the Gene Expression Omnibus (GEO) \cite{OByrne2019}.  
 
-We once again use lanceotron to call peaks from the different cell lines. The number of called peaks differed significantly between experiments (\Cref{fig:mll_peak_calls}A). The most peaks were found in SEM and RS4;11, and the fewest were identified in Patient 3. In the latter case, it is suspected that the known low quality of this sample affected the sequencing, causing an anomalously low number of peaks to be identified. To confirm this, we use megadepth to calculate the average read coverage under identified peak regions \cite{Wilks2021} (\Cref{table:mll_cov}). Unexpectedly, patient 2 showed comparable read coverage to the other samples, while Patient 3 had anomalously low read coverage under the identified peak regions. An unremarkable number of peaks were identified in patient 3. The remainder of the samples have high coverage values sufficient to identify high quality peaks. These results encourage caution when interpreting any topic modelling on both patients 2 and 3.  
+% Within the context of the entire ENCODE dataset, the MLL-AF4 cells were indistinguishable from the closely related B cell precursors. In order to identify differences between them, the model would need a very large number of topics, sufficient to explain all of the detailed similarities between the diverse set of celltypes represented in the dataset. This is computationally difficult, and risks over-parameterizing the data. A reasonable alternative is a detailed examination of these cells in isolation, and a comparison to the results generated in the larger model. In this section, I create a topic model with just the cells of interest and attempt to differentiate them based on patterns in accessible chromatin using BLDA.
+
+We use lanceotron to define peaks representing accessible sequence from the different samples. The number of called peaks differed significantly between experiments (\Cref{fig:mll_peak_calls}A). The most peaks were found in SEM and RS4;11, and the fewest were identified in Patient 3. In the latter case, it is suspected that the known low quality of this sample affected the sequencing, causing an anomalously low number of peaks to be identified. To confirm this, we use megadepth to calculate the average read coverage under identified peak regions \cite{Wilks2021} (\Cref{table:mll_cov}). Unexpectedly, patient 2 showed comparable read coverage to the other samples, while Patient 3 had anomalously low read coverage under the identified peak regions. An unremarkable number of peaks were identified in patient 3. The remainder of the samples have high coverage values sufficient to identify high quality peaks. These results encourage caution when interpreting any topic modelling on both patients 2 and 3.  
 
 
 % Please add the following required packages to your document preamble:
@@ -89,7 +133,7 @@ We once again use lanceotron to call peaks from the different cell lines. The nu
 
 Here we are comparing two methods, BLDA and cisTopic. cisTopic uses as its input a binary accessibility matrix, while BLDA uses a quantitative measure of relative coverage. To understand the structure of input to cisTopic, we plot the number of shared peak regions between the samples (\Cref{fig:mll_peak_calls}). Patient samples are overall dissimilar from \gls{bcp} and the cell lines. Consistent with the number of available peak calls, patient 2 shares the fewest peaks with the other samples. This is explainable by the low numbers of peaks in patient 2 in general. Between the two cell lines, SEM shares significantly more peaks with the \gls{bcp} than RS4;11 does (paired $T$-test P=2.56e-4). Surprisingly, there is no evidence for increased sharing within either PPB or PB cells ($T$-test P=0.595). These patterns of sharing will be important when interpreting the raw differential peak topic modelling versus the qualitative BLDA results.
 
-\subsubsection{An MLL-AF4 specific accessibility blacklist}
+\subsection{An MLL-AF4 specific accessibility blacklist} \label{mll_blacklist}
 
 Cell lines maintained in culture accumulate genetic differences over time, some of which may be advantageous to their survival in culture. \cite{Liu2019}\textcite{Ben-David2018} studied the genetic baseline for the same cell line matured in different laboratories and identified copy number gains and loses, insertions and deletions (indels) and chromosomal translocations affecting large portions of the genome in cell lines which were not shared across laboratories. Latent structural differences between the cell lines in question and the reference genome pose a particularly concerning confounding factor to the interpretation of topic modelling; differences in mappability between regions reflected in abnormal peaks unrelated to biological differences between cell types would contaminate pathway and motif enrichment analyses. To ameliorate concerns associated with structural diversity in the RS4;11 and SEM cell lines within our laboratory environment, we construct a list of regions whose enrichment is solely due to technical issues such as biases in mappability.
 
@@ -115,14 +159,13 @@ The blacklisted regions were therefore over-represented in the keyword regions, 
     \label{fig:mll_bl_olap}
 \end{figure}
 
-\subsubsection{Differential Accessibility between B cell Precursors and MLL-AF4 cells} \label{ch5:mll_diffacc}
+\subsection{Differential Accessibility between B cell Precursors and MLL-AF4 cells} \label{ch5:mll_diffacc}
 
 After filtering out regions which overlapped with either the ENCODE or MLL-AF4 blacklist, we construct a count matrix using RPKM normalized read counts to test for baseline differential accessibility. We initially test for differential accessibility between the MLL-AF4 samples (Patients 1 through 4, RS411, and SEM) and the \gls{bcp} (PPB 1-3, PB 1-3). edgeR is used to identify differentially accessible regions between the two groups based on read counts. Overall, 27970 of the total 64162 regions were differentially accessible at a Q value threshold of 0.05. This is, however, too large a number to reasonably analyse in depth, so we select the top 100, 250, and 500 differentially accessible regions, all of which achieved statistical significance. We use GREAT to conduct an association analysis between these regions and pre-defined biological pathways. The background against which enrichment should be calculated is set to be union of all peak regions from the samples, in order to mitigate the inherent bias of analyzing accessible regions in the genome. All three subsets were enriched for Gene Ontology pathways, including peptidyl-threonine phosphorylation (4.97 fold enrichment, Q = $2.0e-7$), peptidyl-threonine modification (4.31 fold enrichment, Q = 2.4e-6), peptidyl-serine phosphorylation (2.59 fold enrichment, Q = 1.85e-2) and nucleic acid phosphodiester bond hydrolysis (2.62 fold enrichment, Q = 1.67e-2). The regions were also enriched for proximity to several genes, all of which with a corrected FDR Q value lower than 0.05 are shown in \Cref{tab:table:mll_edger_genes}.  Some of these genes are of immediate interest, including RHOU which promotes adhesion of T-cell \gls{all} cells via $\beta_1$ integrin, potentially implicating the protein in known impaired transendothelial migration potential of various kinds of leukemia cells \cite{Trinidad2009, Infante2013}. It is difficult to comprehensively survey this list of genes because their relationship with the identified regions is purely statistical. We have no mechanistic reason to believe that they are truly associated with disease. 
 
 % Top 100, 250, and 500 motif enrichment maybe? Where are the regions?
 \begin{table}
 
-    \caption{\label{tab:table:mll_edger_genes}Enriched genic regions from the top 500 regions differentially accessible betwen MLL-AF4 cells and BCP using edgeR.}
     \centering
     \begin{tabular}[t]{llr}
     \toprule
@@ -149,9 +192,11 @@ After filtering out regions which overlapped with either the ENCODE or MLL-AF4 b
     ANKRD30B & 1.19e-02 & 28.52\\
     \bottomrule
     \end{tabular}
+
+    \caption{\label{tab:table:mll_edger_genes}Enriched genic regions from the top 500 regions differentially accessible betwen MLL-AF4 cells and BCP using edgeR.}
 \end{table}
 
-\subsection{Topic modelling for MLL-AF4 cells}
+\subsection{Topic modelling for KMT2A-AFF1 leukemia}
 
 The focus of this chapter is an in depth investigation into using topic modelling for MLL-AF4 cells. Here, we aim to discover novel pathways that differentiate MLL-AF4 cells and normal \gls{bcp}. We do this by firstly identifying a reasonable number of topics to analyse further based on patterns in topic sharing that we observe. Secondly, we select a specific number of topics and replicate the analysis a number of times. We do this to assess the contribution of stochasticity to the inference procedure. Gibbs sampling is an approach based on Monte Carlo sampling, and as such the quality of the sampled posterior distribution can depend on the starting conditions and the convergence of the algorithm. By explicitly taking into account several repetitions of the inference algorithm we attempt to minimize the effect of chance on identified key regions. 
 
@@ -177,6 +222,8 @@ We select the simplest model for further analysis. We base our decision on the e
     \label{fig:mll_redo_topics}
 \end{figure}
 
+\subsubsection{Five topic one-hot encoding replication}
+
 The $k=5$ OHE analysis consistently identifies at least one topic which is active in all of the MLL-AF4 cells and none of the \gls{bcp} samples (\Cref{fig:mll_redo_topics}). Patient 2 is usually the most active representative of this group within that topic. Some replicates (i.e. replicates 2, 5, 6, 7, 8, 9) also find topics active in all of the \gls{bcp} and few of the MLL-AF4 samples. There is no obvious substructure within the \gls{bcp} samples.  We manually annotate each topic as "enriched in MLL-AF4 cells", "enriched in \gls{bcp}", or neither and perform enrichment for each of the two specific sets relative to the other topics.  Motifs found in the MLL-AF4 speciifc topics in the top 100, 250, and 500 regions include SP4, KLF5, EGR1, and KLF15 (\Cref{fig:mll_redo_topics}B, C, D). Ahr::Arnt, ZNF354C, Arid3a, and Arnt are identified but found broadly between MLL-AF4 and \gls{bcp} regions.  The latter were additionally enriched for BHLHE22 and EBF1 which is a marker for B cell lineage commitment \cite{Infante2013} along with PAX5 which is occasionally identified in \gls{bcp} specific regions (data not shown). The list of motifs presented is reasonably unspecific, though there is evidence that EGR1 has deep functional relationships with many hematological malignancies including \gls{all} \cite{Tian2016}. The fact that there is at least one known system specific transcription factor whose motif is enriched for each set of samples is reassuring.  It is additionally reassuring that these important motifs were identified in each of the ten replicates in their respective sets.  Even in this low-resolution OHE setup, the technique has some power to robustly identify relevant biology across replicates.
 
 \begin{figure}
@@ -185,6 +232,8 @@ The $k=5$ OHE analysis consistently identifies at least one topic which is activ
     \caption{Ten replicates of topic modelling using RPKM normalized input, aka BLDA. A. Inferred topic loadings for each of the 12 samples and all 10 replicates, sorted by standard deviation of topic loading. B. Mean versus standard deviation of specificity, here defined as the contribution of the most enriched topic to that sample divided by the sum of that topics enrichment to all other samples. Averaged over replicate. C. The number of instances where a sample has a topic identified above a loading value of 0.1 versus the number of instances where any topic is annotated above 0.5. Values represent contribution of a particular topic to a particular cell, such that the sum of topic loadings within a particular cell equals 1.}
     \label{fig:mll_reps}
 \end{figure}
+
+\subsubsection{BLDA replication with five topics}
 
 The inferred topic loadings in the BLDA case are also reproducible across replicates (\Cref{fig:mll_reps}A). In each of the 10 replicates, one topic loads preferentially onto Patients 1 and 2, and to a lesser degree onto patients 3 and 4. Another loads preferentially onto RS411 and SEM. The remainder are somewhat divided between a common co-accessibility program amongst all samples (i.e. topic 3 in replicate 5), specifically loading onto PPB (i.e. topic 5 in replicate 6), or PB (Topic 5 in replicate 0). In general, each of the replicates has at least one topic that falls into each of these categories, though the loadings onto the \gls{bcp} are less consistent than the MLL-AF4 cells. The topics loading onto RS411 and SEM were highly specific to those two samples, in contrast to the BCPs whose specificity was much lower, and additionally much more variable (\Cref{fig:mll_reps}B).  The BCPs additionally had many topics annotated to them at low levels, but very few with a higher annotation level of 0.5 (\Cref{fig:mll_reps}C).  This is in contrast to Patients 1 and 2, who had both a large number of highly specific topics across the replicates, and also a very low number of non-specific topics.  From this we conclude that similar topics are able to be found consistently across replicates.  
 
@@ -197,6 +246,7 @@ Having established a high degree of specificity for individual topics to the exp
     \label{fig:mll_region_sharing}
 \end{figure}
 
+\subsubsection{Sample-specific key-word regions across replications}
 
 We sought to understand how reproducibly these regions were identified between replicates. 
 Regions robustly identified as being associated with a topic that loads highly onto a desirable set of samples represent key candidates for further investigation.
@@ -211,6 +261,8 @@ Deriving some idea of functional characteristics from an abitrary set of genomic
     \label{fig:mll_region_repro}
 \end{figure}
 
+\subsection{Annotating reproducibly identifiable patient-related regions}
+
 We begin our characterization of these regions by finding their closest annotated gene body. 32 of the 76 regions lie directly within genic regions. The remainder tend to be found within 50kb of the nearest gene, but the distance is highly variable and some regions are as far as 200kb from their closest gene (\Cref{fig:mll_lnc}A). This distance distribution fits well to our expectations if the regions represented inter-genic enhancer elements.  The closest annotated genes are, interestingly, \glspl{lnc}, and are found in a much higher frequency than expected in 76 randomly samples genes (\Cref{fig:mll_lnc}B,C). Though this result is suggestive, \glspl{lnc} are very challenging to correctly annotate, with efforts being confounded by both technical artifacts and methodological complications \cite[see Figure 1 for an overview of challenges associated with lncRNA annotation]{Cao2018}. There is, however, growing evidence that cancer cells, including leukemic blasts, may hijack the large and poorly understood lncRNA transcriptome to influence differentiation, energy metabolism, malignant proliferation, apoptosis, and the drug resistance of leukemia cells \cite[Table 1]{Gao2020}. It is possible, therefore, that the regions identified represent \glspl{cre} influencing the expression of functional lncRNAs involved in each individual patient's leukemia. However, none of the lncRNAs identified match with those in Table 1 of \textcite{Gao20202}, so their potential functions will remain the subject of further investigation.
 
 \begin{figure}
@@ -219,6 +271,8 @@ We begin our characterization of these regions by finding their closest annotate
     \caption{MLL-AF4 regions compared to reference genes. A. Distance of the 76 reproducible patient regions to their nearest annotate TSS, minus the regions which are sitting in genic regions. B. Frequencies of gene categories in refSeq versus the sample of closest patient genes. C. Frequency of lncRNAs in 5000 random samples of 76 regions from refSeq, showing that the observed frequency of lncRNA is in the far tail of this distribution.}
     \label{fig:mll_lnc}
 \end{figure}
+
+\subsubsection{Histone modifications and transcription factor binding in the patient-related regions}
 
 Histone proteins within nucleosomes may be post-translationally modified by the addition of several chemical groups which collectively serve to regulate transcription and the recruitment of transcription factors. The presence of specific histone modifications at a particular location of the genome can be determined experimentally using \gls{chip}, where peak regions give an estimate of the presence or absence of a particular modification. There are many histone modifications, and their combinatorial method of action makes it difficult to interpret the exact ramifications of their presence \cite{T2001}. Previously, a small number of important histone modifications and transcription factor binding sites were characterized in these samples (see Methods).  
 
@@ -344,7 +398,15 @@ We called peaks on each of the ChIP-seq tracks using LanceOTron and intersected 
 
 
 % discuss this in the discussion, don't interperet it here.
-We searched EnhancerAtlas 2.0 (Citation) for regions matching ours, and found that 17 out of the 76 regions were known enhancers, and 6 were known promoters (\Cref{table:mll_enhancer}). The functionality validated active cell types varied considerably, from enhancers for GPR39 and LYPD1 in pancreatic islet cells to more similar TMEM207 and RP11 enhancers in pro-myelotic leukemia cell line NB4. In this list as well, non-coding RNA targets are also over-represented. RP11, for example, was identified as functionally validated target of 10 of the 17 enhancers. Though RP11 represents a class of otherwise unannotated genes, rather than a protein of its own, many subtypes of RP11 are in fact non-coding RNAs (CITATION). As previously mentioned, these regions are clearly marked as putative enhancer regions, though it is not immediately obvious which genes they may be regulating. Interestingly, some regions co-occur in clusters such as the one on Chromosome 13 in \Cref{fig:mll_enhancer_cluster}. Here, five regions are found together, each marked with enhancer marks H3K4me1 and H3K27ac as well as the transcription factors MLL and PAF1c. The second of these five regions is annotated as an enhancer for TPP2, KDELC1, BIVM, ERCC5, and TEX30 in GM EBV-immortalized cells as well as a fibroblast cell line HFF-1. Whether the remainder of the enhancers are novel in the MLL-AF4 patients remains to be shown experimentally, however there is no clear accessibility in these regions for \glspl{bcp}. Interestingly, these regions are all most accessible in patients compared to any other cell type in the ENCODE blood cell type collection, suggesting that their function may be new in these patient samples (\Cref{fig:encode_pt_regions}). 
+
+\subsubsection{Known annotations in EnhancerAtlas} 
+
+We searched EnhancerAtlas 2.0 (Citation) for regions matching ours, and found that 17 out of the 76 regions were known enhancers, and 6 were known promoters (\Cref{table:mll_enhancer}). The functionality validated active cell types varied considerably, from enhancers for GPR39 and LYPD1 in pancreatic islet cells to more similar TMEM207 and RP11 enhancers in pro-myelotic leukemia cell line NB4. In this list as well, non-coding RNA targets are also over-represented. RP11, for example, was identified as functionally validated target of 10 of the 17 enhancers. Though RP11 represents a class of otherwise unannotated genes, rather than a protein of its own, many subtypes of RP11 are in fact non-coding RNAs (CITATION). As previously mentioned, these regions are clearly marked as putative enhancer regions, though it is not immediately obvious which genes they may be regulating. Interestingly, some regions co-occur in clusters such as the one on Chromosome 13 in \Cref{fig:mll_enhancer_cluster}. Here, five regions are found together, each marked with enhancer marks H3K4me1 and H3K27ac as well as the transcription factors MLL and PAF1c. The second of these five regions is annotated as an enhancer for TPP2, KDELC1, BIVM, ERCC5, and TEX30 in GM EBV-immortalized cells as well as a fibroblast cell line HFF-1. Whether the remainder of the enhancers are novel in the MLL-AF4 patients remains to be shown experimentally, however there is no clear accessibility in these regions for \glspl{bcp}. 
+
+
+\subsection{Validation of patient-related regions within the ENCODE Consortium Blood Cell Collection}
+
+To investigate this further, we collect all of the blood related cell types in the ENCODE consortium's list of available ATAC-seq experiments. We exclude any DNase-seq experiments due to known sysmtematic differences as well as the unproven ability of the method to transfer between accessibility protocols \cite{Klemm2019a}. Without an obvious way to show that differences between DNase-seq and ATAC-seq are not a result of modelling systematic differences, we restrict the analysis to 143 samples within the ENCODE database with available coverage tracks in BigWig format and which are annotated as being associated with the blood tissue system. This data is downloaded and peak called using LanceOTron as before, excluding regions in the ENCODE blacklist as well as the MLL-AF4 specific blacklist developed in \Cref{mll_blacklist}. We additionally use liftOver to transfer genomic coordinates from the native GRCh38 to hg19 to match the other samples' build. The dataset contained, in total, 326427 regions and 155 ATAC-seq experiments. We begin our validation by examining the previously identified regions in the entire ENCODE blood data set. Interestingly, the five regions contained in the previously described putative enhancer cluster are all most accessible in patients compared to any other cell type in the ENCODE blood cell type collection, suggesting that their function may be new in these patient samples (\Cref{fig:encode_pt_regions}). In fact, 74 of the 76 patient regions were the most accessible in patient samples, with the other two being more accessible in BCPs and MLL-AF4 cells rather than the ENCODE dataset.
 
 \begin{figure}
     \centering
@@ -353,16 +415,164 @@ We searched EnhancerAtlas 2.0 (Citation) for regions matching ours, and found th
     \label{fig:encode_pt_regions}
 \end{figure}
 
+We perform topic modelling on the entirety of the ENCODE dataset alongside the MLL-AF4 and \gls{bcp} samples. Hyper-parameter optimization is difficult in this system, purely due to computational considerations. Therefore we select reasonable hyper-parameters based on the defaults for single-cell analyses, setting alpha to 50 and beta to 0.1, as is the recommended default for cisTopic. We run the analysis modelling $k=10,15,20,25,30$ and examine the output (\Cref{fig:encode_all}). The relative sparsity of the topic loadings above $k=15$ leads to each of the patients and BCP cells essentially being enriched for a seperate topic, which makes interpretation difficult. The $k=10$ and $k=15$ cases both model the structure of the system well, however, especially amungst the most closesly related cell types (left-hand side of \Cref{fig:encode_zoom}). The one-hot encoding does not decifer any different structure within the MLL-AF4 and BCP population for either of the two $k$ values, only loading a single topic strongly and a second weakly to the entirety of the set (right-hand side of \Cref{fig:encode_zoom}). Some interesting discrepencies between the $k=10$ and $k=15$ case include an active B cell topic in $k=15$ which loads weakly onto BCP cells but not MLL-AF4 samples. Additionally, patients 3 and 4 share a topic with MLL-AF4 cell lines in the $k=10$ analysis but not in the $k=15$ version.  
+
+
+\begin{figure}
+    \centering
+    \includegraphics[width=\textwidth]{plot/ch5/mll_encode_all_topics.pdf}
+    \caption{Topic modelling for ENCODE blood cell collection with MLL-AF4 and BCP samples for $k=10,15,20,25,30$. }
+    \label{fig:encode_all}
+\end{figure}
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=\textwidth]{plot/ch5/encode_zoom.pdf} 
+    \caption{Zoomed in plot looking at only the most related cell types to the MLL-AF4 and BCP in the ENCODE blood cell collection for $k=10$ and $k=15$ using both one-hot encoding and RPKM normalization.}
+    \label{fig:encode_zoom}
+\end{figure}
+
+One of the key questions that remains to be answered is whether the unique regulatory regions identified in the previous section are still enriched in the patient topics. We took the top 100 annotated regions from topic 6 in the $k=15$ case and found that the top 100 regions in the ENCODE anlaysis included 55 of the 76 reproducible patient regions. The trend across all topics for these regions was consisent with this, most of which were predominantly involved in topic 6 (\Cref{fig:encode_pt_regions_topics}A). Of the 21 regions not within the top 100 regions for topic 6, their accessibility remained strongly associated with topic 6 (\Cref{fig:encode_pt_regions_topics}B). However, three other topics were more represented in this set, namely topics 4, 5, and 12. These topics are involvd in a variety of cell types, and interestingly Topic 4 is more active in patients 3 and 4 than in patients 1 and 2, which is the opposite of the trends previously observed. Topic 5, of which at least one of the patient-related regions has a Z-score over 30, is active in CD4 negative natural killer and T-cells, as well as K562 cancer cells. Together, threse results imply that the regulatory regions previously identified are a mix of regions uniquely active in MLL-AF4 patients and a minority which may be re-used from other cell types.  
+
+\begin{figure}[]
+    \centering
+    \includegraphics[width=\textwidth]{plot/ch5/encode_pt_regions.pdf} 
+    \caption{Activity of 75 reproducibly identified patient-related regions within the inferred $k=15$ BLDA analysis in all of the ENCODE blood cell collection.}
+    \label{fig:encode_pt_regions_topics}
+\end{figure}
 
 % For tomorrow
 
-- 55 of the regions from the patient topic are also found in the encode when you take out anything active in other cell types.
-- are these also the ones actually marked by things and therefore active? 
+%- 55 of the regions from the patient topic are also found in the encode when you take out anything active in other cell types.
+%- are these also the ones actually marked by things and therefore active? 
 
-- Correspondance between the RS411 and SEM topics just in a summary way
-- Use the ENCODE as basically a replication
+%- Correspondance between the RS411 and SEM topics just in a summary way
+%- Use the ENCODE as basically a replication
 
 %\begin{figure}
 %    \centering
 %    \includegraphics[width=\textwidth]{plot/ch5/mll_encode_nt15 _annotated.pdf}
 %\end{figure}
+
+\section{Discussion} \label{ch5:discussion}
+
+
+
+% - chr10:58119757-58122125 is the promoter of ZWINT which is directly implicated in AML
+%     - https://www.genecards.org/cgi-bin/carddisp.pl?gene=ZWINT
+% - chr7:11,870,321-11,872,428 is promoter for THSD7A and associated with AML 
+%     - https://www.ebi.ac.uk/gwas/genes/THSD7A
+% - chr6:161,086,377-161,238,919 is inside of plasminogen, which is associated with AML  
+%     - https://journals.sagepub.com/doi/10.1177/1076029612450771
+% - chr5:27437290-27439356 is just upstream of PURPL gene, involved in p53 
+% - chr5:119723091-119724864 is just upstream of PRR16, known to be involved in AML
+%     - https://maayanlab.cloud/Harmonizome/gene_set/acute+myeloid+leukemia/GWASdb+SNP-Phenotype+Associations
+% - chr4:62138289-62139958 intragenic ADGRL3 which is upregulated in relapsed AML samples 
+%     - https://www.frontiersin.org/10.3389%2Fconf.fphar.2018.63.00023/event_abstract
+% - chr4:176867295-176868639 is intragenic in GPM6A, a suspected ALL oncogene
+%     - https://pubmed.ncbi.nlm.nih.gov/24916915/
+%     - Also a sort of close by one, is this a regulatory region for GPM6A? chr4:177823634-177824976
+% - chr4:157874799-157876498 is intragenic PDGFC, known to be related to AML blasts 
+%     - https://pubmed.ncbi.nlm.nih.gov/11860452/
+% - chr3:97628722-97630586 is a lncRNA that has roles in aneuploidy. 
+%     - https://www.nature.com/articles/s41388-020-01601-8
+% - chr3:4282880-4284204 is upstream of SETMAR (aka Metnase) controls mitotic decatenation checkpoint, AML are bad in this way
+%     - https://pubmed.ncbi.nlm.nih.gov/19458360/
+% - chr3:190303470-190305622 is intragenic IL1RAP, involved in AML stem cell following treatment and progression
+%     - https://ashpublications.org/blood/article/126/23/4266/135849/A-Role-for-IL1RAP-in-Acute-Myelogenous-Leukemia
+% - chr3:106252503-106253840 is upstream of CBLB which has known mutations in AML
+%     - https://www.ncbi.nlm.nih.gov/pmc/articles/PMC1924768/
+%     - Also close to ALCAM whichi s important for HSC self renewal https://pubmed.ncbi.nlm.nih.gov/23280653/ and heavily implicated in AML https://www.sciencedirect.com/science/article/pii/S0006497119339163
+% - chr2:133023823-133025308 just upstream of MIR663B, involved in ALL
+%     - https://www.ncbi.nlm.nih.gov/pmc/articles/PMC6884921/
+% - chr18:6269486-6271399 intragenic L3MBTL4 which is a tumor suppressor gene 
+%     - https://pubmed.ncbi.nlm.nih.gov/22018275/
+% - Two regions very close to SETBP1. SETBP1 HOXA activation, mutant attenuates RUNX and activates MYB. Major oncogene
+%     - https://pubmed.ncbi.nlm.nih.gov/28447248/
+% - chr14:38593423-38595438 is upstream of SSTR1, known to be in leukemia 
+%     - https://pubmed.ncbi.nlm.nih.gov/10447088/
+
+% - chr12:24531253-24532421 intragenic SOX5 genes involved in AML: 
+%     - https://www.sciencedirect.com/science/article/pii/S1044579X18301391
+
+
+
+% - Talk about the lack of H3K79me which is weird given Tom's work on a subclass of enhancers due to MLL recruiting DOT1L. These ones don't seem to, what's going on? (cite Tom's paper)
+% - Also talk about how it might not be bound by MLL-AF4 but maybe just MLL? Not sure, is this even true.
+
+
+% - Monotherapies are often not very useful for KMT2A-AFF1 since relapse is so liekly. Need to figure out what the actual network of genes is an disrupt it. 
+% - Construct testable hypothesis and identify important differentially accessible regions in KMT2A-AFF1
+% - A lot of these regions look actually bound by MLL. So they might not be part of this downstream effect but rather unidentified regulatory regions that MLL directly influences. 
+%     - Does MLL bind other than having its K methyltransferase activity? Or maybe indepdenant of DOT1L? it seems like these regions are not 79me so what's up with that 
+
+
+This chapter proposes the use of topic modelling to prioritise accessible regulatory regions in a poorly understood but difficult to treat subset of leukemias.  Four childhood KMT2A-AFF1 patients were studied alongside two cell models of the same leukemia . To contrast these cancerous cells and model "normal", non-cancerous, developmental biology, we include a newly identified lymphoid committed fetal-specific cell type whose transcriptional profile closely matches known infant \glspl{all}. We additionally include a transcriptionally distinct but closely related lymphoid progenitor, ProB (PB) cells, which have known analogues in adults, but are derived from fetal sources.  We show that there are distinct accessibility patterns in the four different subsets of cells, each represented by a topic which loads uniquely onto that subset. We show that these topics encode reproducibly identified accessible regions that differentiate between KMT2A-AFF1 cancerous samples and developmentally normal \gls{bcp}, even at the stringent threshold of 100 individual regions per topic. The alternative topic modelling approach tested against, the one-hot encoding input method used by cisTopic, did not demonstrate any ability to differentiate between cell models and patient samples or PB versus PPB but did broadly differentiate between the cancerous and normal cell types, indicating at least a partial role of regions which are entirely accessible or not in the accessibility program of leukemia samples (\Cref{fig:mll_all_topic}). This bears relevance to the question of differential regulatory element usage versus differential accessibility at the same regulatory element. The fact that both methods are able to distinguish between the samples means that, on a broad level, there is at least some differential regulatory element usage between fetal KMT2Ar leukemia and the fetal PPB cells. 
+
+Interestingly, BLDA also identified topics of regulatory elements accessible in Pre-ProB cells not shared with ProB cells, helping to illuminate fetal-specific lymphopoiesis trajectories (\Cref{fig:mll_reps}, \Cref{fig:mll_region_repro}A). A large number of these regions (102 for PPB and 158 for PB) were consistently identiied across every replicate in the top 500 regions. These regions will be the focus of more mechanistic studies tryin to understand chromatin remodelling in fetal lymphopoiesis and how it differs from the same differentiation process in adults. Understanding this process in detail is crucial to the study of fetal leukemiagenesis. These results will be particularly applicable to the study of \glspl{lsc} and how they are transformed from developmentally normal cells; is it unclear whether the pathways involved in self-renewal and maintenance of LSCs may be shared with PPB cells. In this case the topic modelling approach allows for a fine-grained dissection of known pathways and their relative contributions to different cell types. However, the aim for this chapter was explicitly to examine the regulatory regions involved in patients. The remainder of the fine-grained results will be examined in depth as time allows. 
+
+BLDA identified a topic in each replicate that was uniquely enriched in the patient samples, most strongly in patients 1 and 2. For values of $k$ larger than 10, this topic starts to split in half, with one reprenseted strongly in patients 1 and 2 as before but the second represented more strongly in patients 3 and 4 (\Cref{fig:mll_all_topic}). Values of $k$ this large, however, seem extremely unreliable in practice, and it is unlikely that regions would be consistenly prioritized after replication. This is demonstrated by the extremely dispursed nature of the topics in \gls{bcp} samples and the lack of a central topic explaining core regulatory features shared by the entire group, which we expect to see in this case. The reasons for the consistent lack of enrichment for this topic in patients 3 and 4 are difficult to explain, but may revolve around either patient heterogeneity or sample quality. The first is an area of active research, with well known results showing very little consensus between patient derived models for different KMT2A-FPs even in terms of distinct chromatin binding \cite{Lin2016}. These previous results urge caution when interpreting observations within samples deriving from a single fusion partner. The heterogeneity within the patient population with regards to chromatin accessibility and binding efficiency of the KMT2A-AFF1 fusion protein as well as important downstream chromatin remodellers like RUNX1 is not well studied. However, in the case that substantial heterogeneity exists, and if it is important for treatment efficacy and differential prognosis, topic modelling appears to be a promising approach for dissecting these differences. The alternative explaintion is differences in patient sample quality, which is difficult to describe quantatively in this case. Though the sequencing appears to have reasonable coverage under each of the peak regions, known difficulties with preparing and isolating the necessarry cells from the patients may have prevented a completely unbiased view into their accessible chromatin. The third possibility for these differences may be differential genome instability and mutational background within the patients. Though well established that KMT2Ar cancers tend to not carry with them many functional cooperating mutations, mutations in key pathwayas such as FLT3 (frequently upregulated in KMT2Ar leukemias) have been described in pediatric and adult AML leading to extremely poor prognosis \cite{CE2014,Sternberg2005,Sexauer2017}. The genetic background of these samples is unknown, and further work is necessary to understand the contribution of genetic differences to the epigenetic profile of KMT2A-AFF1 driven leukemias.
+
+This patient heterogeneity makes differential accessibility analysis such as the one we attempted to perform very challenging. The genes identified with the edgeR analysis bear no strong relationship to known KMT2Ar pathways, though some such as RhoU and SERF1A from \Cref{tab:table:mll_edger_genes} may have suggestive links to \gls{all} \cite{Infante2013a,Z2020,Wilson2016}. The fundamental strength with the topic modelling approach is the ability to look at variation in accessibility both collectively, between the cell lines and each individual patient, as differentially. Few regions, it seems, are uniformly different in accessibility between the different categories. This is reinforced by the inferred topic loadings, which seperate well on the different categories and suggest that fundamnetally different regulatory biology underlies the cell lines versus the patients, and that substantial heterogeneity exists even within each of those sub-classes. 
+
+The regions picked out with the topic modelling approach appear to be mostly functional in this cellular context. Many of them have been previously annotated as enhancer or promoter elements in distantly related cell types, indicating their functional potential (\Cref{table:mll_enhancer}). Additionally, the profile of histone modifications and bound transcription factors within one of the specific patients indicates a large over-abundance of MLL binding alongside RUNX1 and PAF1c even when compared with other regions enriched for H3K4me1 and H3K27ac (\Cref{table:mll_chip}, \Cref{fig:mll_enhancer_overlap}). Interestingly, these regions are not enriched for AF4 binding, indicating that they may in fact be bound by wild-type KMT2A, though to different levels than the comparable \gls{bcp}. To our knowledge, this phenomenom has not been previously observed, and raises the possibility that the KMT2A-FP may alter the binding profile of wild-type KMT2A within the genome. These regions are actually depleted for H3K79me2 marks, which is unexpected given that KMT2A typically controls the methylation of K79 through the recruitment of DOT1L. Recent work has shown that H3K79 methylation conferred by DOT1L is essential for a subset of enhancer elements to form promoter interactions in KMT2A-AFF1 leukemia, and that inhbition of DOT1L destroys these essential connections \cite{Godfrey2019}. As the only known H3K79 methyltransferase, we can be confident that the function of regions is not dependant on DOT1L recruitment, and therefore representing a completely seperate class of KMT2A-bound but DOT1L-depleted enhancer elements that have, to our knowledge, not been previously described \cite{Q2002}. Moreso, the majority of these regions of the genome are still specifically associated with the KMT2A-AFF1 patients against the backdrop of a large set of blood cells from the ENCODE project, and they remain the most accessible cell types for all but two of the regions. This is suggestive evidence that these regions may be specifically active in these patients, at least within the hematopoetic niche. Further work will investigate these regions in the context of the entire ENCODE accessibility dataset. Though the initial results do not suggest that this is the case, as the set of cell types that these regions are previously annotated in are extremely diverse, evidence for a shared or co-opted regulatory program from a distantly related cell type would be extremely exciting. 
+
+The next steps to validate these regions and their roles in the regulatory biology of KMT2A-AFF1 will be necessarily experimental. In order to understand which, if any, genes are being regulated by these regions, Capture-C assays will need to be performed within these specific samples. Motif enrichment within these regions, and indeed within most of the annotated sets of regions, has not been particularly illuminating as to their pathways. To understand their role in a DOT1L-indepdenant regulatory program, their enhancer-promoter interactions should be assessed with and without the use of inhibitors such as EPZ-5676. Though the possibility that these regulatory regions work completely indepdenant of this key co-factor is remote, the implications for current research into therapeutic DOT1L supression make them key candidates to understand the resistance mechanisms employed by cancer cells. The other crucial and specific aspect of these enhancers is their association with PAF1c, more typically understood as an elongation factor associated with RNA polymerase 2 \cite{Oss2017,Yang2016,Hou2019,Jaehning2010}. Very recent evidence from mouse models indicates that PAF1c occupancy may be associated with super-enhancers and is crucial for maintaining the self-renewal capacity of mouse embryonic stem-cells \cite{Ding2021}. Additionally, it is known that PAF1c is involved in the regulation of key genes involved in \gls{aml} such as HOXA9 and MEIS1, so its coordinated activity across these enhancers is of interest to the central regulatory axis of leukemia. 
+
+In summary, this chapter has adopted a topic modelling approach that we previously developed to model chromatin accessibility patterns in KMT2A-AFF1 patients when compared to healthy fetal-specific lymphoid precursors. We identified a subset of regions bound by wildtype KMT2A but not involving DOT1L recruitment. These regions were uniquely accessible in these patients against the background of the hematopoetic niche, but there is evidence that a subset function as enhancers and promoters in distantly related cell types. Further work will focus on characterising the interactions of these regions with genes and ways in which their leukemia-specific functions may be interupted. These regulatory elements represent key targets for investigation in the search for therapeutic targets to a deadly and impactful disease.  
+
+
+\section{Methods (Work in Progress)} \label{ch5:methods}
+
+% Things to write about 
+
+% ATAC-seq for the cell lines, patients, and BCP cells 
+
+\subsection{Data Acquisition }
+
+\paragraph{Patient data}
+
+\todo{I don't have any details on these. I see in Joe's paper that one was from }
+
+???
+
+\paragraph{Cell Lines}
+
+\todo{I've just copy pasted dthis from Joe's paper. Is it right?}
+
+Two cell lines were used in this analysis. SEM cells, a KMT2A-AFF1 B cell \gls{all} cell line were purchased from DSMZ (\url{https://www.dsmz.de}). SEM cells were cul- tured in Iscove’s modified Dulbecco’s medium (IMDM) with 10\% fetal bovine serum (FBS) and 1x GlutaMAX, with cell density maintained between 5× 105/mL and 2×106/mL. RS411 cells were purchased from ATCC (\url{https://www.atcc.org}) and cultured in RPMI-1640 with 10\% FBS and 1x GlutaMAX, with cell density maintained between 5×105/mL and 1.5 ×106/mL. Cells were confirmed to be free of mycoplasma.
+
+\paragraph{Pre-ProB and ProB cells}
+
+ATAC-seq data was downloaded from GEO (ascession number GSE122989) as coverage track in bigWig format. 
+
+\subsection{ATAC-seq}
+\subsection{RNA-seq}
+\subsection{ChIP-seq}
+\subsection{Peak Calling with LanceOTron}
+
+Peak calling on coverage data for ATAC-seq was performed with LanceOTron v1.0.1 \cite{Hentges2021}. LanceOTron was installed from Pypi here \url{https://pypi.org/project/lanceotron/1.0.1/} and used with the flags \textit{-c 0.5} and \textit{--format bed} to select only regions exceeding a peak score of 0.5 and outputting the data as a bed file for further analysis. 
+
+\subsection{Coverage Metrics}
+
+Megadepth was used to construct coverage metrics \cite{Wilks2021}. Peak regions were used as an annotation (flag \textit{-a}) in order to only consider coverage under regions expected to be well represented.
+
+\subsection{Topic modelling}
+
+Count matrices were constructed from paired coverage data and LanceOTron peak calls using the BLDA python package, available at \url{https://github.com/Chris1221/blda}. For BLDA analyses, the format was given as "bigwig", while OHE matrices were constructed with the "dummy" option. Matrices were used directly for topic modelling with a modified version of cisTopic available at \url{https://github.com/Chris1221/cisTopic_bulk}. Bayesian hyperparamter optimization is described in \Cref{ch4:hyper} and more detail on the BLDA method is given \Cref{ch4:method_blda}.
+
+
+% Coverage analysis with megadepth
+% Constructing count matrices with BLDA and cisTopic
+% MLL blacklist
+% Differential accessibility with edgeR
+% Gene Ontology Enrichment
+% Gene enrichments 
+% Topic Modelling with BLDA
+% Motif enrichment with motifscan
+% Bootstrapping lncRNA from refSeq
+% Bootrapping enhancer and normal background for chromatin marks and TF binding
+% Finding enhancer and promoter regions with ENhancerAtlas
+% Visualizing coverage data with IGV
+% ENCODE Blood Cell Data Set
+
