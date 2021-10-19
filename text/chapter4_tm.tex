@@ -1,9 +1,7 @@
-%\begin{savequote}[8cm]
-%\textlatin{Neque porro quisquam est qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit...}
-
-%There is no one who loves pain itself, who seeks after it and wants to have it, simply because it is pain...
-%  \qauthor{--- Cicero's \textit{de Finibus Bonorum et Malorum}}
-%\end{savequote}
+\begin{savequote}[8cm]
+  It's easier to be terrified by an enemy you admire.
+  \qauthor{--- Frank Herbert, \textit{Dune}}
+\end{savequote}
 
 \chapter{Identifying co-accessible regulatory regions using topic modelling} \label{ch4}
 %\chapter{Regulatory Program Topic Modelling for ATAC-seq}
@@ -19,21 +17,26 @@
 
 \section{Introduction} \label{ch4:intro}
 
-The physical accessibility of \Glspl{cre} in part determines which and how many transcription factor proteins are able to bind to the \gls{dna}. This in turn regulates the process of transcription, controlling the expression of genes in a dynamic and contextual way \cite{Minnoye2021, Klemm}. Recent methods have permitted the profiling of chromatin accessibility on a genome-wide scale, however the role of the physical compaction of the genome and specific \glspl{cre} remains a poorly understood predictor of cell identity outside of niche model systems \cite{Schulz2019}. Understanding the dynamics of chromatin accessibility both between and within cell systems is of relevance to understanding the effect of sequence mutations that disrupt \glspl{tfbs} and which alter the availability of the entire \gls{cre}. Additionally, a thorough catalogue of relevant and distinct accessible elements within a pathological cell system would allow for improved prioritization of mis-regulated transcription factors and their genomic consequences. In this chapter, I aim to improve the characterization of regulatory programs through modelling chromatin accessibility with high throughput sequencing. The resulting method, BLDA, represents a viable approach to identify key regions of accessible chromatin that are both shared between similar cell types and discriminatory of others. I show that this method has similar power to identify important regions when compared to single cell ATAC-seq, and demonstrate its use on the well-characterised developmental stages between \glspl{hsc} and mature erythrocytes. The results here demonstrate that topic modelling is a reliable method for general purpose discrimination of important accessible regions in arbitrary collections of bulk \gls{atac} experiments.
+The physical accessibility of \Glspl{cre} in part determines which and how many transcription factor proteins are able to bind to the \gls{dna}. Complementarily, the binding of certain transcription factors, especially pioneer factors, has the ability to alter the accessibility of the chromatin \cite{Zaret2011}. The complex and dynamic interplay between these opposing forces regulates the process of transcription, controlling the expression of genes in a dynamic and contextual way \cite{Minnoye2021, Klemm}. Recent methods have permitted the profiling of chromatin accessibility on a genome-wide scale, however the role of the physical compaction of the genome and specific \glspl{cre} remains a poorly understood predictor of cell identity outside of niche model systems \cite{Schulz2019}. Understanding the dynamics of chromatin accessibility both between and within cell systems is of relevance to understanding the effect of sequence mutations that disrupt \glspl{tfbs} and which alter the availability of the entire \gls{cre}. Additionally, a thorough catalogue of relevant and distinct accessible elements within a pathological cell system would allow for improved prioritization of mis-regulated transcription factors and their genomic consequences. In this chapter, I aim to improve the characterization of regulatory programs through modelling chromatin accessibility with high throughput sequencing. The resulting method, BLDA, represents a viable approach to identify key regions of accessible chromatin that are both shared between similar cell types and discriminatory of others. I show that this method has similar power to identify important regions when compared to single cell ATAC-seq, and demonstrate its use on the well-characterised developmental stages between \glspl{hsc} and mature erythrocytes. The results here demonstrate that topic modelling is a reliable method for general purpose discrimination of important accessible regions in arbitrary collections of bulk \gls{atac} experiments.
 
 \subsection{Transcriptional regulation through chromatin accessibility} \label{ch3:chrom_acc}
 
-Beginning with a single copy of the diploid genome, sequential cellular differentiation creates upwards of $\sim$40 trillion individual cells with unique functions across organ systems and functional niches \cite{Quinlan2010}. Each of these cells contains essentially the same genetic code yet performs entirely different roles in the body, indicating the presence of an immensely intricate regulatory process dictating how genes are expressed in certain cellular contexts. As explored in \Cref{intro:atac}, a portion of this cell type specific regulation of expression is explained by DNA binding proteins, yet where and how these proteins are able to bind is dictated by the physical accessibility of the underlying sequence. Within the nucleus, DNA is packaged into a highly compact and organized structure known as chromatin. The construction of chromatin involves wrapping molecules of DNA around histone proteins. Typically, 147 base pairs of DNA wrap around an octomer of histone proteins to form the fundamental subunit of chromatin called a nucleosome. The density and positioning of nucleosomes along the sequence determines to a large degree the ability of macromolecules to bind to the sequence. Other factors such as the post-translational modifications of histone proteins and higher order organization of chromatin also contribute to functional chromatin accessibility. Nucleosomes tend to be found at lower densities within active regulatory regions, indicating their regulatory capacity. 
+Beginning with a single copy of the diploid genome, sequential cellular differentiation creates upwards of $\sim$40 trillion individual cells with unique functions across organ systems and functional niches \cite{Quinlan2010}. Each of these cells contains essentially the same genetic code yet performs entirely different roles in the body, indicating the presence of an immensely intricate regulatory process dictating how genes are expressed in certain cellular contexts. As explored in \Cref{intro:atac}, a portion of this cell type specific regulation of expression is explained by DNA binding proteins, yet where and how these proteins are able to bind is dictated by the physical accessibility of the underlying sequence \cite{Bell2011}. Within the nucleus, DNA is packaged into a highly compact and organized structure known as chromatin. The construction of chromatin involves wrapping molecules of DNA around histone proteins. Typically, 147 base pairs of DNA wrap around an octomer of histone proteins to form the fundamental subunit of chromatin called a nucleosome \cite{Zaret2011}. 
+Nucleosomes can act as a barrier to RNA polymerase II mediated transcription as well as many transcription factors \cite{Tsompana2014}. 
+The exception to this rule are pioneer factors, which bind instead to closed chromatin and recruit chromatin remodellers to alter its accessibility, priming it for functional activities and the binding of other transcription factors \cite{HW2017,Zaret2011}. 
+%The density and positioning of nucleosomes along the sequence determines to a large degree the ability of macromolecules to bind to the sequence. 
+Other factors such as the post-translational modifications of histone proteins and higher order organization of chromatin also contribute to functional chromatin accessibility \cite{Gates2017}. 
+As a consequence of these facts, nucleosomes tend to be found at lower densities within active regulatory regions; this makes the relative accessibility of a region an indicator of its regulatory capacity \cite{Tsompana2014}. 
 
-The accessible genome comprises between 2 and 3 percent of the actual sequence in humans, but represents approximately 90 percent of regions bound by \gls{tf} \cite{Thurman2012}. The ability of a \gls{tf} to bind does not in and of itself dictate that it will bind, but represents a regulatory capacity at the accessible site. \Glspl{tf} bind to sequence competitively with histones and other chromatin binding proteins to dynamically modulate the organization and placement of nucleosomes. While closed chromatin is generally not amenable to binding by \glspl{tf}, permissive chromatin is sufficiently dynamic to allow for some binding. Accessibility therefore exists on a continuum that is dynamically reorganized in part based on the cellular context and its battery of expressed transcription factors.  Profiling the accessible regions of the genome in a particular cellular context provides a window into active regulatory programs. 
+The accessible genome comprises between 2 and 3 percent of the actual sequence in humans, but represents approximately 90 percent of regions bound by \gls{tf} \cite{Thurman2012}. The accessibility of a \gls{tf} binding site does not in and of itself dictate that it will bind, but represents a regulatory capacity at the accessible site \cite{Tsompana2014}. \Glspl{tf} bind to sequence competitively with histones and other chromatin binding proteins to dynamically modulate the organization and placement of nucleosomes \cite{Calo2013a}. While closed chromatin is generally not amenable to binding by \glspl{tf} other than the previously described pioneer factors, permissive chromatin is sufficiently dynamic to allow for some binding \cite{Bell2011a}. Accessibility therefore exists on a continuum that is dynamically reorganized in part based on the cellular context and its battery of expressed transcription factors.  Profiling the accessible regions of the genome in a particular cellular context provides a window into active regulatory programs. 
 
 % Recent evidence suggests that chromatin accessibility is intricately involved in regulation of this process
 
 %Moreso, due to the relatively short lifespan of mature blood cells, \glspl{hsc} are essential throughout life to provide multilineage progenitors for the many hematopoietic niches . This makes hematopoiesis an ideal system to further our understanding of stem cell biology, intricately linked to oncogenesis. Changes in chromatin accessibility are crucial to directing the progression of blood cell development \cite{Hu2016}. 
 
-Several methods exist to experimentally determine chromatin accessibility. The majority of recent methods use an enzymatic reaction to selectively fragment the genomic sequence and next-generation sequencing to comprehensively survey the genome for the enrichment of fragments. Examples of these approaches include DNAse-seq, \gls{atac}, MNase-seq, FAIRE-seq, and NOMe-seq, reviewed in \textcite{Klemm} and \textcite{Meyer2014}. Of these, DNAse-seq is the most sensitive but requires a large number of cells to generate reliable libraries for sequencing \cite{Boyle2008}. ATAC-seq is a reliable method for characterising accessibility, applicable to systems with as few as 500 cells \cite{Corces2017}. Datasets generated with ATAC-seq have been growing exponentially year over year, representing in 2019 several times more data generated than any other approach for assaying chromatin accessibility \cite{Yan2020}. Thus, methods for the interpretation of large compendiums of ATAC-seq form a useful complement to the method's growing adaptation. 
+Several methods exist to experimentally determine chromatin accessibility. The majority of recent methods use an enzymatic reaction to selectively fragment the genomic sequence and next-generation sequencing to comprehensively survey the genome for the enrichment of fragments. Examples of these approaches include DNAse-seq, \gls{atac}, MNase-seq, FAIRE-seq, and NOMe-seq, reviewed in \textcite{Klemm} and \textcite{Meyer2014}. Of these, DNAse-seq is the most sensitive but requires a large number of cells to generate reliable libraries for sequencing \cite{Boyle2008}. ATAC-seq is a reliable method for characterising accessibility, applicable to systems with as few as 500 cells for bulk, or even on a per-cell basis \cite{Corces2017,Buenrostro2015}. Datasets generated with ATAC-seq have been growing exponentially year over year, representing in 2019 several times more data generated than any other approach for assaying chromatin accessibility \cite{Yan2020}. Thus, methods for the interpretation of large compendiums of ATAC-seq form a useful complement to the method's growing adaptation. 
 
-\subsection{Regulation of key stages within hematopoiesis and erythropoiesis}
+\subsection{Regulation of key stages within hematopoiesis and erythropoiesis} \label{ch4:ery}
 
 Of the $\sim$40 trillion cells in a typical human body, approximately 90\% derive from the hematopoietic lineage \cite{Quinlan2010}. The process of differentiation from \glspl{hsc} to mature blood cells is therefore of immense importance to health and disease. In adults, hematopoiesis begins from \glspl{hsc} which exist in a relatively quiescent state within the bone marrow, maintaining the capability for self-renewal and and multipotenency \cite{Baron2012}. Because this differentiation process occurs throughout life, hematopoiesis represents an ideal model system to understand the properties of stem cell biology, the dysregulation of which is intricately linked with oncogenesis \cite{Orkin2008}. These cells give rise to all other phenotypically distinct blood cells through a hierarchical cascade of differentiation (\Cref{fig:hem_sum}). Several intermediary points in this process are relevant to this chapter, including the initial priming of the stem cells into multipotent progenitor cells (MPPs). This involves, among other things, active polycomb repression of lineage specification genes such as \textit{Ebf1} and \textit{Pax5} in MPP cells \cite{H2010}. Lineage commitment represents a decision point, where continuing specification will exclusively occur within a specific branch of the hematopoeitic differentiation tree. In this chapter, we use erythropoiesis as a model system to biologically validate the model we introduce. 
 
@@ -177,11 +180,11 @@ The R package {\tt edgeR} is used to set a baseline expectation for differential
 \begin{figure}
   \centering
   \includegraphics[width=\textwidth]{plot/ch4/sim_ll_surface.pdf}
-  \caption{Hyperparameter log-likelihood surface for two hyperparameters.}
+  \slcaption{Hyperparameter log-likelihood surface for two hyperparameters.}
   \label{fig:llhood_surfacea_simulation}
 \end{figure}
 
-We investigate topic modelling in three separate scenarios. Firstly, we run cisTopic as intended, using the single cell data. Secondly, we create pseudo-bulk alignment files for each of the clusters and run cisTopic normally. Thirdly, we adapt cisTopic to accept normalized read count. This will allow us to validate our baseline assumption that LDA is able to capture similar information within bulk sequencing experiments.
+We investigate topic modelling in three separate scenarios. Firstly, we ran cisTopic as intended, using the single cell data. Secondly, we created pseudo-bulk alignment files for each of the clusters and run cisTopic normally. Thirdly, we adapted cisTopic to accept normalized read count. This allowed us to validate our baseline assumption that LDA is able to capture similar information within bulk sequencing experiments.
 
 \subsubsection{LDA captures realistic regulatory patterns in known single cell systems} \label{ch4:sc}
 
@@ -192,7 +195,7 @@ For the first case, we model the system of 384 cells with 4, 5, 6, 7, and 8 topi
 \begin{figure}
   \centering
   \includegraphics[width=\textwidth]{plot/ch4/sc_opt_params}
-  \caption{Single cell log likelihood for different values of the topic modelling hyper-parameters $\alpha$ and $\beta$ for various numbers of topics being modelled.}
+  \slcaption{Single cell log likelihood for different values of the topic modelling hyper-parameters $\alpha$ and $\beta$ for various numbers of topics being modelled.}
   \label{fig:sc_opt_params}
 \end{figure}
 
@@ -201,7 +204,7 @@ We investigate the loading of these topics on each of the cells in the collectio
 \begin{figure}
   \centering
   \includegraphics[width=\textwidth]{plot/ch4/sc_topics.pdf}
-  \caption{Topic loadings for 4, 5, 6, 7, and 8 topic instances of the LDA inference procedure using optimal hyperparamters as decided in \Cref{fig:sc_opt_params}. Inset shows average fold change amungst enriched topics for each of the number of topics modelled. Enriched topics are identified by a one-tailed student's $t$ test for difference between a known cell cluster and the remainder of cells.} 
+  \slcaption{Topic loadings for 4, 5, 6, 7, and 8 topic instances of the LDA inference procedure using optimal hyperparamters as decided in \Cref{fig:sc_opt_params}. Inset shows average fold change amongst enriched topics for each of the number of topics modelled. Enriched topics are identified by a one-tailed student's $t$ test for difference between a known cell cluster and the remainder of cells.} 
   \label{fig:sc_topics}
 \end{figure}
 
@@ -214,7 +217,7 @@ Peaks were called with Macs2 instead of LanceOTRon, resulting in a larger number
 \begin{figure}
   \centering
   \includegraphics[width=\textwidth]{plot/ch4/sc_macs2.pdf}
-  \caption{Analysis of single cell dataset with peaks called by MACS2. A. The number of peak calls made by both callers, with their overlapping portion displayed in the center of the Venn diagram. B. Likelihood surface for the optimization of the $\alpha$ hyper-parameter. C. Likelihood surface for the optimization of the $\beta$ hyper-parameter. D. Median fold enrichment for topics inferred under optimal hyper-parameters. E. Inferred topic loadings on single cells using optimal hyper-parameters.}
+  \slcaption{Analysis of single cell dataset with peaks called by MACS2. A. The number of peak calls made by both callers, with their overlapping portion displayed in the center of the Venn diagram. B. Likelihood surface for the optimization of the $\alpha$ hyper-parameter. C. Likelihood surface for the optimization of the $\beta$ hyper-parameter. D. Median fold enrichment for topics inferred under optimal hyper-parameters. E. Inferred topic loadings on single cells using optimal hyper-parameters.}
   \label{fig:sc_macs2}
 \end{figure}
 
@@ -239,7 +242,7 @@ To assess whether the identified topic loadings represent similar trends to the 
   4     & 3                      & 1                     \\
   5     & 111                    & 19                   
   \end{tabular}
-  \caption{Five topic single cell inferred topic loadings and the proportion of their selected regions which overlap 100 established differentially accessible regions. Overall, 61 of the 100 regions were found in the top 415 regions.}
+  \slcaption{Five topic single cell inferred topic loadings and the proportion of their selected regions which overlap 100 established differentially accessible regions. Overall, 61 of the 100 regions were found in the top 415 regions.}
   \label{table:sc_t5_over}
   \end{table}
 
@@ -270,7 +273,7 @@ We take two approaches to constructing the count matrix. The first is the alread
   RPKM Normalization & 8 & 101.26750 & 0.3455916\\
   \bottomrule
   \end{tabular}
-  \caption{Optimal LDA hyper-parameters for pseudo-bulked scATAC-seq parameterized by \textit{a priori} defined topic numbers and two different read quantification methods.}
+  \slcaption{Optimal LDA hyper-parameters for pseudo-bulked scATAC-seq parameterized by \textit{a priori} defined topic numbers and two different read quantification methods.}
   \label{table:pb_opt_params}
 \end{table}
 
@@ -280,7 +283,7 @@ The OHE case for this data was unable to produce topics which differentiated bet
 \begin{figure}
   \centering
   \includegraphics[width = \textwidth]{plot/ch4/pb_thresholding_topics.pdf}
-  \caption{Inferred topic loadings using optimized hyper-parameters and \textit{a priori} defined for both the OHE and BLDA methods using pseudo-bulked scATAC-seq data.}
+  \slcaption{Inferred topic loadings using optimized hyper-parameters and \textit{a priori} defined for both the OHE and BLDA methods using pseudo-bulked scATAC-seq data.}
   \label{fig:pb_no_thresh_lot_topics}
 \end{figure}
 
@@ -289,7 +292,7 @@ To investigate to what degree the BLDA procedure found regions which were differ
 \begin{figure}
   \centering
   \includegraphics[]{plot/ch4/pb_diff_acc_tot.pdf}
-  \caption{Total number of selected "key-word" regions for a given topic number between the two pseudo-bulk approaches, the two peak calling methods (thresholded and non-thresholded LanceOTron) and single cell analyses.}
+  \slcaption{Total number of selected "key-word" regions for a given topic number between the two pseudo-bulk approaches, the two peak calling methods (thresholded and non-thresholded LanceOTron) and single cell analyses.}
 
   \todo{Colours are wrong here, fix this.}
   \label{fig:pb_tot_number}
@@ -302,7 +305,7 @@ Firstly, we find a clear difference between OHE and BLDA in their ability to ide
 \begin{figure}
   \centering
   \includegraphics[]{plot/ch4/pb_diff_acc_olap.pdf}
-  \caption{Number of overlapping regions between the top 100 differentially accessible regions determined by EdgeR and key-word regions selected by taking the top 1\% of a fitted gamma distribution for several LDA analyses. }
+  \slcaption{Number of overlapping regions between the top 100 differentially accessible regions determined by EdgeR and key-word regions selected by taking the top 1\% of a fitted gamma distribution for several LDA analyses. }
   \label{fig:pb_olap_number}
 \end{figure}
 
@@ -318,25 +321,24 @@ To create a dataset of bulk ATAC-seq data to study erythropoiesis, we download a
 \begin{figure}
   \centering
   \includegraphics[width=\textwidth]{plot/ch4/ludwig_shared_peaks.pdf}
-  \caption{Peak calling in erythropoiesis dataset. A. Number of identified peak regions by cell type using LanceOTron and a score threshold of 0.5. B. The number of peaks shared between cell types.}
+  \slcaption{Peak calling in erythropoiesis dataset. A. Number of identified peak regions by cell type using LanceOTron and a score threshold of 0.5. B. The number of peaks shared between cell types.}
   \label{fig:ludwig_shared_peaks}
 \end{figure}
 
 Peak calls were merged to create two count matrices. The first represents the typical cisTopic analysis method, one-hot encoding each peak region from its derivative cell type. The second is our BLDA method, using an integer value of RPKM normalised read count for each identified accessible region. We optimise the hyper-parameters as before, and run inference for between 8 and 20 topics. The number of topics was chosen to demonstrate, on the lower end, how LDA will group similar cells when it is forced to, and on the upper end if there is any remaining structure after each cell is allowed its own topic. We find that, similar to pseudo-bulked scATAC-seq data, the BLDA method consistently produces cleaner and better defined topic loadings for individual cell types (\Cref{fig:ludwig_quick_topics}). While this larger and more realistic dataset allows the OHE strategy to pick out some topics which differentiate between cell types, the patterns tend to be strongly constrained to certain grouping such as the erythroid precursors or lineage committed cells. The BLDA method on the other hand distinguishes highly cell-specific topics. The number of topics which are shared across multiple cell types varies considerably as the model is given more freedom with increasing number of topics. Even at low numbers, highly differentiated cell types like CD4 and CD8 T cells show distinct, highly enriched topics. Conversely, topics are almost always identified which are enriched in closely related intermediary cell types. We quantify the number of times two cell types share an enriched topic, taking a cell-normalised topic loading threshold of 0.25 to indicate enrichment (\Cref{fig:ludwig_quick_coenriched}). Two blocks of co-enriched cell types are obvious, one beginning from erythroid progenitors (ProE) and ending with basophilic erythroblasts (BasoE), the second beginning with BasoE and ending with Erythroblasts (Ery). It is rare for a cell type in either one of these clusters to share topic loadings with the other. Additionally, topics are occasionally shared between sequential stages of early differentiation, i.e. between hematopoetic stem cells and multi-potent progenitors (MPPs), but these topics never overlap with lineage committed cell stages.  
 
-\todo{Add in the selected hyper-parameters table. }
 
 \begin{figure}
   \centering
   \includegraphics[width=\textwidth]{plot/ch4/ludwig_quick_topics.pdf}
-  \caption{Inferred topic loadings for erythropoiesis dataset. On the left hand side, One-hot encoded LDA, on the right bulk LDA with RPKM normalization. Facets indicate the number of modelled topics. }
+  \slcaption{Inferred topic loadings for erythropoiesis dataset. On the left hand side, One-hot encoded LDA, on the right bulk LDA with RPKM normalization. Facets indicate the number of modelled topics. Cells are indicated in reverse differentiation pseudotime, with each facet ordered on the Y axis as CD8, CD4, CLP, LMPP, Erythroblast, Ortho/Ret, OrthoE, PolyE, BasoE, ProE2, ProE1, CFUE, ProE, MEP, CMP, MPP, and HSC. See \Cref{fig:ludwig_8_topic} for a detailed exploration for $k=8$.}
   \label{fig:ludwig_quick_topics}
 \end{figure}
 
 \begin{figure}
   \centering
   \includegraphics[width=0.5\textwidth]{plot/ch4/ludwig_coenriched.pdf}
-  \caption{Similarity of cell types based on the number of times they are co-enriched for a topic, summarized over all numbers of inferred topics. Topics inferred using BLDA for the erythropoiesis dataset.}
+  \slcaption{Similarity of cell types based on the number of times they are co-enriched for a topic, summarized over all numbers of inferred topics. Topics inferred using BLDA for the erythropoiesis dataset as described in the Methods section. For a description of the cell types, see \Cref{ch4:ery}}
   \label{fig:ludwig_quick_coenriched}
 \end{figure}
 
@@ -354,14 +356,14 @@ To investigate further, descriptive statistics are used to identify candidate di
 \begin{figure}
   \centering
   \includegraphics[width=\textwidth]{plot/ch4/ludwig_topics_gamma_16.pdf}
-  \caption{Number of identified regions above the facetted percent point function of a Gamma distribution with inferred parameters using SciPy.}
+  \slcaption{Number of identified regions above the facetted percent point function of a Gamma distribution with inferred parameters using SciPy.}
   \label{fig:ludwig_topics_gamma}
 \end{figure}
 
 \begin{figure}
   \centering
   \includegraphics[width=\textwidth]{plot/ch4/topic8_distribution.pdf}
-  \caption{Distribution of the region-topic distribution from a candidate topic from \Cref{fig:ludwig_topics_gamma}, topic 8. Top left shows a comparison of 1000 bootstrapped values of the data against descriptive statistics for several common distributions. Top right shows the empirical histogram of the data compared against the two distributions nominated from the Cullen and Frey graph fitted via maximum likelihood estimation. Top left shows empirical versus theoretical percentiles from the two fitted distributions, while bottom right shows the empirical cumulative distribution function.}
+  \slcaption{Distribution of the region-topic distribution from a candidate topic from \Cref{fig:ludwig_topics_gamma}, topic 8. Top left shows a comparison of 1000 bootstrapped values of the data against descriptive statistics for several common distributions. Top right shows the empirical histogram of the data compared against the two distributions nominated from the Cullen and Frey graph fitted via maximum likelihood estimation. Top left shows empirical versus theoretical percentiles from the two fitted distributions, while bottom right shows the empirical cumulative distribution function.}
   \label{fig:ludwig_topic8_distr}
 \end{figure}
 
@@ -376,14 +378,14 @@ The smallest $k$ topics forces sharing between similar cell types (\Cref{fig:lud
 \begin{figure}
   \centering
   \includegraphics[width=\textwidth]{plot/ch4/ludwig_quick_topic_8.pdf}
-  \caption{Cell-topic distribution for $k=8$ topic. A. Loadings across cell types ordered by differentiation trajectory. B. Loadings by topic across differentiation pseudo-time.}
+  \slcaption{Cell-topic distribution for $k=8$ topic. A. Loadings across cell types ordered by differentiation trajectory. B. Loadings by topic across differentiation pseudo-time.}
   \label{fig:ludwig_8_topic}
 \end{figure}
 
 \begin{figure}
   \centering
   \includegraphics[width=\textwidth]{plot/ch4/ludwig_motifs_8.png}
-  \caption{All identified motifs for $k=8$ topic analysis. The top 100, 250, and 500 topics were selected and enrichment was calculated either against all peak regions, or against all selected key-word regions. }
+  \slcaption{All identified motifs for $k=8$ topic analysis. The top 100, 250, and 500 topics were selected and enrichment was calculated either against all peak regions, or against all selected key-word regions. }
   \label{fig:ludwig_motifs_8}
 \end{figure}
 
@@ -399,11 +401,11 @@ Topic 1, active in early lineage commitment, include critical proteins for eryth
 
 Topic 2 represents the main inferred mid-to-late erythropoesis grouping of regulatory elements. It contains the majority of important proteins involved in iron homeostasis and mitochondrial transportation (SLC25A38), heme production (ALAS2), regulation of cellular differentiation (SP1). In addition, SP1 represents the first protein involved with enucleation. An gene set enrichment analysis showed subenrichment for "Positive regulation of erythrocyte differentiation", indicating that a significant portion of the genes identified relate to erythropoiesis. Additional terms identified include "tetrapyrrole biosynthetic process", "tetrapyrrole metabolic process", and "pigment metabolic process". \todo{Table for the GO enrichment with panther} 
 
-Topic 3 peaks in activity amungst orthochromatic erythroblasts, and also has some representation in early hematopoesis, as well as committed T cells. Topic 3 includes NRF1, a knockout of which leads to embryonic lethality due to impaired fetal liver erythropoiesis \cite{Chen2001}. GLRX5, predominantly expressed in late erythropoesis by poly and orthochromatic erythroblasts (Fig 1c \cite{Pishesha2014}) is also amungst the nearest key genes, along with FOXO3 and PPP2R1A \cite{Mello2019}. Topic 3 also shows enrichment for a large number of motifs, indiciative that a number of identified peak regions are not directly involved in protein coding but are intergenic enhancer elements (\Cref{fig:ludwig_motifs_8}).
+Topic 3 peaks in activity amongst orthochromatic erythroblasts, and also has some representation in early hematopoesis, as well as committed T cells. Topic 3 includes NRF1, a knockout of which leads to embryonic lethality due to impaired fetal liver erythropoiesis \cite{Chen2001}. GLRX5, predominantly expressed in late erythropoesis by poly and orthochromatic erythroblasts (Fig 1c \cite{Pishesha2014}) is also amongst the nearest key genes, along with FOXO3 and PPP2R1A \cite{Mello2019}. Topic 3 also shows enrichment for a large number of motifs, indiciative that a number of identified peak regions are not directly involved in protein coding but are intergenic enhancer elements (\Cref{fig:ludwig_motifs_8}).
 
 Early hematopoesis is represented by topics 6 and 8, which are only associted with a handful of genes associated with erythropoesis (\Cref{table:mello_genes}). HIP1 is known to be crucial to successful hematopoesis and LYN is involved in the successful proliferation of hematopoetic cells \cite{Oravecz-Wilson2004, OLaughlin-Bunner2001}. Motifs in these regions include ARID3a, known to be expressed in HSCs, and MEIS1, also involved in early hematopoesis \cite{Zeddies2014,Miller2016, Ratliff2020}. 
 
-These results indicate that BLDA has identified regions which correspond to realistic regions of differential accessibility throughout the process of erythropoesis. Though the method is not specific, in that many important regions are not represented amungst the results.  
+These results indicate that BLDA has identified regions which correspond to realistic regions of differential accessibility throughout the process of erythropoesis. Though the method is not specific, in that many important regions are not represented amongst the results.  
 
 
 
@@ -423,18 +425,18 @@ These results indicate that BLDA has identified regions which correspond to real
   \begin{subfigure}[b]{0.5\linewidth}
       \centering
       \includegraphics[width=\textwidth]{plot/ch4/RHAG}
-      \caption{The RhAG promoter}
+      \slcaption{The RhAG promoter}
       \label{fig:RhAG}
   \end{subfigure}
   \hfill
   \begin{subfigure}[b]{0.5\linewidth}
     \centering
     \includegraphics[width=\textwidth]{plot/ch4/R3HDM4}
-    \caption{R3HDM4}
+    \slcaption{R3HDM4}
     \label{fig:r3hdm4}
   \end{subfigure}
 
-  \caption{Accesibility at two keyword regions for topic 2 among cells in the erythropoetic differentiation trajectory. }
+  \slcaption{Accesibility at two keyword regions for topic 2 among cells in the erythropoetic differentiation trajectory. }
     
 \end{figure}
 
@@ -445,26 +447,26 @@ These results indicate that BLDA has identified regions which correspond to real
   \begin{table}
   %\resizebox{\textwidth}{!}{
     \tiny
-\begin{tabularx}{\hsize}{|X|X|X|X|X|X|X|X|X|}
+\begin{tabularx}{\hsize}{XXXXXXXXX}
   
   \toprule
 Category & Topic  1 & Topic  2 & Topic  3 & Topic  4 & Topic  5 & Topic  6 & Topic  7 & Topic  8\\
 \midrule
-Anti-apoptosis & CTSB & MKL1, BCL2L1, CTSB, NR3C1 & CITED2, PGAP2, TNFAIP3 & PDPK1 & HSPA9, NFKB1 & NA & NA & NA\\
-Cellular component involved in apoptosis & ACTN4, KPNB1 & CDH1, KPNB1, GSN & PSMB1, RB1CC1 & ACTN4 & VIM & PSMB1 & DBNL & NA\\
-Erythroblast enucleation & NA & SP1 & NA & NA & NA & NA & NA & NA\\
-Erythrocyte differentiation & STAT5A & ALAS2, SLC25A38, BPGM, ERCC2 & CITED2, BPGM & NA & HCLS1, NCKAP1L & LYN & BPGM, DYRK3 & NA\\
+Anti-apoptosis & CTSB & MKL1, BCL2L1, CTSB, NR3C1 & CITED2, PGAP2, TNFAIP3 & PDPK1 & HSPA9, NFKB1 &   &   &  \\
+Cellular component involved in apoptosis & ACTN4, KPNB1 & CDH1, KPNB1, GSN & PSMB1, RB1CC1 & ACTN4 & VIM & PSMB1 & DBNL &  \\
+Erythroblast enucleation &   & SP1 &   &   &   &   &   &  \\
+Erythrocyte differentiation & STAT5A & ALAS2, SLC25A38, BPGM, ERCC2 & CITED2, BPGM &   & HCLS1, NCKAP1L & LYN & BPGM, DYRK3 &  \\
 Hematopoiesis \& regulation of cell differentiation & GFI1B, ZBTB16, TXNRD2 & BCL11A, SP1, TXNRD2 & GLRX5, PPP2R1A & TTC7A & IKZF1 & ZBTB16, LYN & IKZF1, CDK6, TTC7A & ZBTB16\\
-Heme metabolism & ALAD, BLVRB, TMEM14C & ALAD, ALAS2, BLVRB, FECH, HMBS, SLC25A38, SPTA1, UROD & ALAD & FECH & NA & NA & NA & NA\\
+Heme metabolism & ALAD, BLVRB, TMEM14C & ALAD, ALAS2, BLVRB, FECH, HMBS, SLC25A38, SPTA1, UROD & ALAD & FECH &   &   &   &  \\
 Induction of apoptosis & LGALS1, MAPK1, SPN, DAPK2, SAP30BP, VAV1 & KAT2B, RBM38, TP53BP2, AKAP13, ERCC2 & BCLAF1, PPP2R1A, STK17B, TP53BP2, BTG1, NMT1 & CUL3, KAT2B, HIP1 & RBM38, MAP3K5, APP & HIP1 & HIP1 & MAP3K5\\
-Iron homeostasis & NA & UROD & FBXL5, SLC25A28 & NA & NA & NA & NA & NA\\
-Oxygen homeostasis/ response to hypoxia or to oxidative stress & ACTN4, MLH1 & HMBS, STAT5B, ERCC2, NRF1, PTK2B & CAT, CITED2, MLH1, OXSR1, PARK7 & ACTN4, PTK2B & ECE1, NFKB1, NR4A2 & IPCEF1 & NA & CAT, IPCEF1\\
-Primitive hematopoiesis & STK3 & NA & NA & NA & NA & NA & NA & NA\\
+Iron homeostasis &   & UROD & FBXL5, SLC25A28 &   &   &   &   &  \\
+Oxygen homeostasis/ response to hypoxia or to oxidative stress & ACTN4, MLH1 & HMBS, STAT5B, ERCC2, NRF1, PTK2B & CAT, CITED2, MLH1, OXSR1, PARK7 & ACTN4, PTK2B & ECE1, NFKB1, NR4A2 & IPCEF1 &   & CAT, IPCEF1\\
+Primitive hematopoiesis & STK3 &   &   &   &   &   &   &  \\
 \bottomrule
   \end{tabularx}
   %}
 
-  \caption{Genes from \textcite{Mello2019} represented in the closest genes set of 500 keyword regions for each of the eight BLDA topics grouped by function.}
+  \slcaption{Genes from \textcite{Mello2019} represented in the closest genes set of 500 keyword regions for each of the eight BLDA topics grouped by function.}
   \label{table:mello_genes}
 \end{table}
 \end{landscape}

@@ -38,12 +38,12 @@
 % generating a PDF to send to the printer!
 
 % This adds a "DRAFT" footer to every normal page.  (The first page of each chapter is not a "normal" page.)
-\fancyfoot[C]{\emph{DRAFT Printed on \today}}  
+%\fancyfoot[C]{\emph{DRAFT Printed on \today}}  
 
 % This highlights (in blue) corrections marked with (for words) \mccorrect{blah} or (for whole
 % paragraphs) \begin{mccorrection} . . . \end{mccorrection}.  This can be useful for sending a PDF of
 % your corrected thesis to your examiners for review.  Turn it off, and the blue disappears.
-\correctionstrue
+%\correctionstrue
 
 
 %%%%% BIBLIOGRAPHY SETUP
@@ -82,6 +82,8 @@
 \usepackage{xcolor}
 \usepackage{tabularx}
 \usepackage{nicefrac}
+\usepackage{listofitems}
+\usepackage{setspace}
 
 \usepackage{caption}
 \usepackage{subcaption}
@@ -125,6 +127,9 @@
 \def\SMCSMC{{\tt SMCSMC} }
 \def\Time{time\xspace}
 \def\Times{times\xspace}
+
+% For short captions by default
+\newcommand\slcaption[1]{\setsepchar{.}\readlist*\pdots{#1}\caption[{\pdots[1].}]{#1}}
 
 
 \definecolor{codegreen}{rgb}{0,0.6,0}
@@ -259,6 +264,17 @@
  	\input{text/acknowledgements}
 \end{acknowledgements}
 
+\newpage
+\section*{Clarification on Contributions}
+The methods developed and analyses performed in this thesis represent my original work. Due to its highly collaborative nature, I use ``I'' and ``we'' pronouns interchangeably throughout. Contributions of colleagues are outlined explicitly in the “Acknowledgements” sections of each “Results” chapter.
+
+\section*{Previously Published Work}
+Some of the text in this thesis has been previously published. Specifically, some expositional text in the introduction is published in \fullcite{10.1371/journal.pone.0247647}, and the majority of Chapter 3 is published in \fullcite{Cole2020}. 
+
+
+\newpage
+
+
 %%%%% ABSTRACT -- Nothing to do here except comment out if you don't want it.
 \begin{abstract}
 	\input{text/abstract}
@@ -307,13 +323,13 @@
 %%%%% CHAPTERS
 % Add or remove any chapters you'd like here, by file name (excluding '.tex'):
 \flushbottom
-%\include{text/chapter1_intro}
+\include{text/chapter1_intro}
 %\include{text/chapter2_smc}
 \include{text/chapter3_bm}
-%\include{text/chapter4_tm}
-%\include{text/chapter5_mll}
+\include{text/chapter4_tm}
+\include{text/chapter5_mll}
 %\include{text/chapter5_mll-diffHEAD^1}
-%\include{text/chapter6_discussion.tex}
+\include{text/chapter6_discussion.tex}
 
 %% APPENDICES %% 
 % Starts lettered appendices, adds a heading in table of contents, and adds a
