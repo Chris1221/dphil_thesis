@@ -1,12 +1,17 @@
 ### <p align="center" style="font-size:15px"> Machine Learning Methods for Next Generation Sequencing Data </p> 
 ### <p align="center"> Applications to MLL-AF4 Leukemia and Demographic Inference
  
-  
+
+ 
 <p align="center"> Christopher B. Cole
   
 <p align="center"> Exeter College
 <p align="center"> University of Oxford
 <p align="center"> Michaelmas 2021 </p>
+
+<p align="center">
+<a href=#><img src="https://img.shields.io/badge/View%20on%20ORA-Official%20thesis%20record-darkblue"></a>
+</p> 
 
 As next generation sequencing technologies continue to mature and find applications across genomics, it has become clear that the scale and scope of generated data far exceeds our ability for manual interpretation. Machine learning has shown remarkable success in finding patterns in this data and generating biologically testable hypotheses. In this thesis, I develop and apply machine learning methods which use NGS data to answer outstanding questions in population and functional genomics.
 An understanding of the genetic history of global populations has been hindered by a lack of methods capable of inferring directional migration over time. 
