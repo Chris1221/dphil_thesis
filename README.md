@@ -1,5 +1,5 @@
 ### <p align="center" style="font-size:15px"> Machine Learning Methods for Next Generation Sequencing Data </p> 
-### <p align="center"> Applications to MLL-AF4 Leukemia and Demographic Inference
+#### <p align="center"> Applications to MLL-AF4 Leukemia and Demographic Inference
  
 
  
