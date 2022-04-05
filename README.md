@@ -10,7 +10,7 @@
 <p align="center"> Michaelmas 2021 </p>
 
 <p align="center">
-<a href=#><img src="https://img.shields.io/badge/View%20on%20ORA-Official%20thesis%20record-darkblue"></a>
+<a href="https://ora.ox.ac.uk/objects/uuid:f59588c0-9b92-4e9e-b9b8-c6f2104ffd6a"><img src="https://img.shields.io/badge/View%20on%20ORA-Official%20thesis%20record-darkblue"></a>
 </p> 
 
 As next generation sequencing technologies continue to mature and find applications across genomics, it has become clear that the scale and scope of generated data far exceeds our ability for manual interpretation. Machine learning has shown remarkable success in finding patterns in this data and generating biologically testable hypotheses. In this thesis, I develop and apply machine learning methods which use NGS data to answer outstanding questions in population and functional genomics.
